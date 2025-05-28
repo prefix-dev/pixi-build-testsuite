@@ -1,0 +1,36 @@
+from pathlib import Path
+import pytest
+import shutil
+
+from ..common import verify_cli_command, get_manifest, repo_root
+
+
+@pytest.mark.extra_slow
+@pytest.mark.parametrize(
+    "pixi_project",
+    [
+        pytest.param(example_path, id=example_path.name)
+        for example_path in repo_root().joinpath("examples").iterdir()
+        if example_path.is_dir()
+    ],
+)
+def test_pixi_install_examples(pixi_project: Path, pixi: Path, tmp_pixi_workspace: Path) -> None:
+    """
+    Test that pixi install succeeds for all example projects in the examples directory.
+
+    This test iterates through all folders in the examples directory and verifies
+    that `pixi install` completes successfully for each project.
+    """
+    # Remove existing .pixi folders
+    shutil.rmtree(pixi_project.joinpath(".pixi"), ignore_errors=True)
+
+    # Copy to workspace
+    shutil.copytree(pixi_project, tmp_pixi_workspace, dirs_exist_ok=True)
+
+    # Get manifest
+    manifest = get_manifest(tmp_pixi_workspace)
+
+    # Install the environment
+    verify_cli_command(
+        [pixi, "install", "--locked", "--manifest-path", manifest],
+    )
