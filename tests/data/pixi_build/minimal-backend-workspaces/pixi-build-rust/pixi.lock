@@ -16,6 +16,6 @@ packages:
   constrains:
   - __glibc >=2.17
   input:
-    hash: 1616b7d1d661d0f48cdb19c9f3bbaf9638ee975565caf14ee2da275dcfd2bebd
+    hash: d02acb03ab6c39a980a6b2aad630eb8c4622a02419f3fda359869df7e3ab0a15
     globs:
     - pixi.toml

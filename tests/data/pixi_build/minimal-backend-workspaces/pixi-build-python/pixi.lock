@@ -690,7 +690,7 @@ packages:
   depends:
   - python
   input:
-    hash: 49318e0292fa1ba1ac29effd5af5e5966ff62b7553ae0f1549eb6c568fda70cf
+    hash: 2ce63008711fb89f32a03b168fe2d3deb3200016a5bbc5d8effe18fd515e2ed9
     globs:
     - pixi.toml
 - conda: https://prefix.dev/conda-forge/linux-64/tk-8.6.13-noxft_h4845f30_101.conda
