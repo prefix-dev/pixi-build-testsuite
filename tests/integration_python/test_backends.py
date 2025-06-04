@@ -17,7 +17,7 @@ from .common import get_manifest, repo_root, verify_cli_command
         if example_path.is_dir()
     ],
 )
-def test_pixi_install_examples(pixi_project: Path, pixi: Path, tmp_pixi_workspace: Path) -> None:
+def test_pixi_minimal_backend(pixi_project: Path, pixi: Path, tmp_pixi_workspace: Path) -> None:
     env = {
         "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
     }
