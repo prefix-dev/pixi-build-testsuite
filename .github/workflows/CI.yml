@@ -19,6 +19,7 @@ env:
   CICD_INTERMEDIATES_DIR: "_cicd-intermediates"
   XDG_CACHE_HOME: ${{ github.workspace }}/.cache
   PYTEST_ADDOPTS: "--color=yes"
+  PYTHONIOENCODING: utf-8
 
 jobs:
   test-linux-x86_64:
@@ -91,7 +92,6 @@ jobs:
         env:
           PIXI_BIN_DIR: ${{ env.PIXI_WORKSPACE }}/artifacts
           BUILD_BACKENDS_BIN_DIR: ${{ env.PIXI_WORKSPACE }}/artifacts
-          PYTHONIOENCODING: utf-8
 
   test-macos-aarch64:
     timeout-minutes: 10
