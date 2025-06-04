@@ -91,6 +91,7 @@ jobs:
         env:
           PIXI_BIN_DIR: ${{ env.PIXI_WORKSPACE }}/artifacts
           BUILD_BACKENDS_BIN_DIR: ${{ env.PIXI_WORKSPACE }}/artifacts
+          PYTHONIOENCODING: utf-8
 
   test-macos-aarch64:
     timeout-minutes: 10
