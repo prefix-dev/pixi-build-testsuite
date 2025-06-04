@@ -1,0 +1,20 @@
+package:
+  name: simple-app
+  version: 0.1.0
+
+source:
+  path: .
+  use_gitignore: true
+
+build:
+  number: 0
+  script:
+    - mkdir -p $PREFIX/bin
+    - if: win
+      then:
+        - echo "@echo off" > %PREFIX%/bin/simple-app.bat
+        - echo "echo Build backend works" >> %PREFIX%/bin/simple-app.bat
+      else:
+        - echo "#!/usr/bin/env bash" > $PREFIX/bin/simple-app
+        - echo "echo Build backend works" >> $PREFIX/bin/simple-app
+        - chmod +x $PREFIX/bin/simple-app

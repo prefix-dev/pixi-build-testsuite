@@ -1,8 +1,8 @@
 [project]
 dependencies = ["rich"]
-name = "rich_example"
+name = "simple-app"
 requires-python = ">= 3.11"
-scripts = { rich-example-main = "rich_example:main" }
+scripts = { simple-app = "simple_app:main" }
 version = "0.1.0"
 
 [build-system]
