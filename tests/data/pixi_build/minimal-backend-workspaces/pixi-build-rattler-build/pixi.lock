@@ -24,7 +24,7 @@ packages:
   build: h0dc7051_0
   subdir: osx-64
   input:
-    hash: 8fc0bf9b6beffdb8c87c8755d1c0406283091d440560f6209acf965bdb93ded9
+    hash: 6ab51b82a0a5ba3af66d8e4726b90c38c57687b9b31ca68b73df18e667a59260
     globs:
     - pixi.toml
     - recipe.yaml
@@ -34,7 +34,7 @@ packages:
   build: h60d57d3_0
   subdir: osx-arm64
   input:
-    hash: 8fc0bf9b6beffdb8c87c8755d1c0406283091d440560f6209acf965bdb93ded9
+    hash: 6ab51b82a0a5ba3af66d8e4726b90c38c57687b9b31ca68b73df18e667a59260
     globs:
     - pixi.toml
     - recipe.yaml
@@ -44,7 +44,7 @@ packages:
   build: h9490d1a_0
   subdir: win-64
   input:
-    hash: 8fc0bf9b6beffdb8c87c8755d1c0406283091d440560f6209acf965bdb93ded9
+    hash: 6ab51b82a0a5ba3af66d8e4726b90c38c57687b9b31ca68b73df18e667a59260
     globs:
     - pixi.toml
     - recipe.yaml
@@ -54,7 +54,7 @@ packages:
   build: hb0f4dca_0
   subdir: linux-64
   input:
-    hash: 8fc0bf9b6beffdb8c87c8755d1c0406283091d440560f6209acf965bdb93ded9
+    hash: 6ab51b82a0a5ba3af66d8e4726b90c38c57687b9b31ca68b73df18e667a59260
     globs:
     - pixi.toml
     - recipe.yaml
