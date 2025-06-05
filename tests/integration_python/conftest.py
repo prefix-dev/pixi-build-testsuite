@@ -191,7 +191,10 @@ def build_backends(load_dotenv: None) -> None:
 
 
 @pytest.fixture
-def tmp_pixi_workspace(tmp_path: Path) -> Path:
+def tmp_pixi_workspace(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    # Create a short temporary directory name to avoid long path issues on windows.
+    tmp_path = tmp_path_factory.mktemp("px")
+
     pixi_config = """
 # Reset to defaults
 default-channels = ["conda-forge"]
