@@ -8,5 +8,7 @@ preview = ["pixi-build"]
 version = "0.1.0"
 
 [dependencies]
-foobar = { path = "./recipe" }
 foobar-desktop = { path = "./recipe" }
+
+[package.build]
+backend = { name = "pixi-build-rattler-build", version = "*" }
