@@ -11,11 +11,11 @@ outputs:
           then:
             - mkdir -p %PREFIX%\bin
             - echo @echo off > %PREFIX%\bin\foobar.bat
-            - echo echo foobar >> %PREFIX%\bin\foobar.bat
+            - echo echo Hello from foobar >> %PREFIX%\bin\foobar.bat
           else:
             - mkdir -p $PREFIX/bin
             - echo "#!/usr/bin/env bash" > $PREFIX/bin/foobar
-            - echo "echo foobar" >> $PREFIX/bin/foobar
+            - echo "echo Hello from foobar" >> $PREFIX/bin/foobar
             - chmod +x $PREFIX/bin/foobar
 
   - package:
@@ -26,11 +26,11 @@ outputs:
           then:
             - mkdir -p %PREFIX%\bin
             - echo @echo off > %PREFIX%\bin\bizbar.bat
-            - echo echo bizbar >> %PREFIX%\bin\bizbar.bat
+            - echo echo Hello from bizbar >> %PREFIX%\bin\bizbar.bat
           else:
             - mkdir -p $PREFIX/bin
             - echo "#!/usr/bin/env bash" > $PREFIX/bin/bizbar
-            - echo "echo bizbar" >> $PREFIX/bin/bizbar
+            - echo "echo Hello from bizbar" >> $PREFIX/bin/bizbar
             - chmod +x $PREFIX/bin/bizbar
 
   - package:
@@ -44,9 +44,9 @@ outputs:
           then:
             - mkdir -p %PREFIX%\bin
             - echo @echo off > %PREFIX%\bin\foobar-desktop.bat
-            - echo echo foobar-desktop >> %PREFIX%\bin\foobar-desktop.bat
+            - echo echo Hello from foobar-desktop >> %PREFIX%\bin\foobar-desktop.bat
           else:
             - mkdir -p $PREFIX/bin
             - echo "#!/usr/bin/env bash" > $PREFIX/bin/foobar-desktop
-            - echo "echo foobar-desktop" >> $PREFIX/bin/foobar-desktop
+            - echo "echo Hello from foobar-desktop" >> $PREFIX/bin/foobar-desktop
             - chmod +x $PREFIX/bin/foobar-desktop
