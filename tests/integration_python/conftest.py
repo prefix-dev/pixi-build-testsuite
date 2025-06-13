@@ -1,15 +1,11 @@
 import os
 import shutil
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 import dotenv
 import pytest
-import tomli_w
-import yaml
 
-from .common import CURRENT_PLATFORM, exec_extension
+from .common import CURRENT_PLATFORM, Workspace, exec_extension
 
 
 @pytest.fixture
@@ -26,24 +22,6 @@ def examples_dir() -> Path:
     Returns the path to the examples directory in the root of the repository
     """
     return Path(__file__).parents[3].joinpath("examples").resolve()
-
-
-@dataclass
-class Workspace:
-    recipe: dict[str, Any]
-    workspace_manifest: dict[str, Any]
-    workspace_dir: Path
-    package_manifest: dict[str, Any]
-    package_dir: Path
-    recipe_path: Path
-    debug_dir: Path
-
-    def write_files(self) -> None:
-        self.recipe_path.write_text(yaml.dump(self.recipe))
-        workspace_manifest_path = self.workspace_dir.joinpath("pixi.toml")
-        workspace_manifest_path.write_text(tomli_w.dumps(self.workspace_manifest))
-        package_manifest_path = self.package_dir.joinpath("pixi.toml")
-        package_manifest_path.write_text(tomli_w.dumps(self.package_manifest))
 
 
 @pytest.fixture

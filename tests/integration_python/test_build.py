@@ -1,10 +1,10 @@
-from pathlib import Path
-import shutil
 import json
-import pytest
-from .conftest import Workspace
+import shutil
+from pathlib import Path
 
-from .common import ExitCode, verify_cli_command
+import pytest
+
+from .common import ExitCode, Workspace, verify_cli_command
 
 
 def test_build_conda_package(
@@ -26,7 +26,6 @@ def test_build_conda_package(
     # Ensure that exactly one conda package has been built
     built_packages = list(simple_workspace.workspace_dir.glob("*.conda"))
     assert len(built_packages) == 1
-    assert built_packages[0].exists()
 
 
 def test_build_conda_package_variants(
