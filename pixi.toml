@@ -10,8 +10,8 @@ requires-pixi = ">=0.45"
 filelock = ">=3.16.0,<4"
 git = "==2.49.0"
 httpx = ">=0.28.0,<1"
-mypy = ">=1.15,<1.16"
-py-rattler = ">=0.13,<0.14"
+mypy = ">=1.16,<1.17"
+py-rattler = ">=0.14,<0.15"
 pygithub = ">=2.5.0,<3"
 pytest = "*"
 pytest-rerunfailures = ">=15,<16"
@@ -75,7 +75,7 @@ typos = "typos --write-changes --force-exclude"
 # Feature to build recipes
 #
 [feature.recipes.dependencies]
-rattler-build = ">=0.42,<0.43"
+rattler-build = ">=0.43,<0.44"
 
 [feature.recipes.tasks.build-backends]
 cmd = "rattler-build build --recipe-dir empty --output-dir ."
