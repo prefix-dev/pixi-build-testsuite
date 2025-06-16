@@ -19,7 +19,7 @@ def test_build(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
         env=env,
     )
 
-    # Ensure that exactly one conda package has been built
+    # Ensure that exactly three conda packages have been built
     built_packages = list(tmp_pixi_workspace.glob("*.conda"))
     assert len(built_packages) == 3
 
