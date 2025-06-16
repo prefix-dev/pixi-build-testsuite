@@ -33,8 +33,11 @@ def test_install(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None
     env = {
         "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
     }
+
+    # Run `install` should work and create a lock file
     verify_cli_command([pixi, "install", "--manifest-path", tmp_pixi_workspace], env=env)
 
+    # Running `install` again require a lock file update
     verify_cli_command(
         [pixi, "install", "--locked", "--manifest-path", tmp_pixi_workspace], env=env
     )
