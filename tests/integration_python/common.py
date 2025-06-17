@@ -2,10 +2,14 @@ import os
 import platform
 import subprocess
 from contextlib import contextmanager
+from dataclasses import dataclass
 from enum import IntEnum
 from pathlib import Path
-from typing import Generator
+from typing import Any, Generator
 
+
+import tomli_w
+import yaml
 from rattler import Platform
 
 PIXI_VERSION = "0.47.0"
@@ -23,10 +27,29 @@ platforms = ["{CURRENT_PLATFORM}"]
 """
 
 
+@dataclass
+class Workspace:
+    recipe: dict[str, Any]
+    workspace_manifest: dict[str, Any]
+    workspace_dir: Path
+    package_manifest: dict[str, Any]
+    package_dir: Path
+    recipe_path: Path
+    debug_dir: Path
+
+    def write_files(self) -> None:
+        self.recipe_path.write_text(yaml.dump(self.recipe))
+        workspace_manifest_path = self.workspace_dir.joinpath("pixi.toml")
+        workspace_manifest_path.write_text(tomli_w.dumps(self.workspace_manifest))
+        package_manifest_path = self.package_dir.joinpath("pixi.toml")
+        package_manifest_path.write_text(tomli_w.dumps(self.package_manifest))
+
+
 class ExitCode(IntEnum):
     SUCCESS = 0
     FAILURE = 1
     INCORRECT_USAGE = 2
+    COMMAND_NOT_FOUND = 127
 
 
 class Output:
