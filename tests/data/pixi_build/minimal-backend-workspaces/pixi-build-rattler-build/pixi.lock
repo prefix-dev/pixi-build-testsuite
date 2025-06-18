@@ -24,9 +24,8 @@ packages:
   build: h0dc7051_0
   subdir: osx-64
   input:
-    hash: d806abd66d48d9519a0414bfc2f9ae77e7721a22c568bf98495b6a6ddf130eb0
+    hash: ed7ce2b4ba0f27f7ddb9621c1f72f4c904b2b0af9f5e7d3a3404d4caacc6fda8
     globs:
-    - pixi.toml
     - recipe.yaml
 - conda: .
   name: simple-app
@@ -34,9 +33,8 @@ packages:
   build: h60d57d3_0
   subdir: osx-arm64
   input:
-    hash: d806abd66d48d9519a0414bfc2f9ae77e7721a22c568bf98495b6a6ddf130eb0
+    hash: ed7ce2b4ba0f27f7ddb9621c1f72f4c904b2b0af9f5e7d3a3404d4caacc6fda8
     globs:
-    - pixi.toml
     - recipe.yaml
 - conda: .
   name: simple-app
@@ -44,9 +42,8 @@ packages:
   build: h9490d1a_0
   subdir: win-64
   input:
-    hash: d806abd66d48d9519a0414bfc2f9ae77e7721a22c568bf98495b6a6ddf130eb0
+    hash: ed7ce2b4ba0f27f7ddb9621c1f72f4c904b2b0af9f5e7d3a3404d4caacc6fda8
     globs:
-    - pixi.toml
     - recipe.yaml
 - conda: .
   name: simple-app
@@ -54,7 +51,6 @@ packages:
   build: hb0f4dca_0
   subdir: linux-64
   input:
-    hash: d806abd66d48d9519a0414bfc2f9ae77e7721a22c568bf98495b6a6ddf130eb0
+    hash: ed7ce2b4ba0f27f7ddb9621c1f72f4c904b2b0af9f5e7d3a3404d4caacc6fda8
     globs:
-    - pixi.toml
     - recipe.yaml
