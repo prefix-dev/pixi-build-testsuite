@@ -106,9 +106,8 @@ packages:
   - libstdcxx >=15
   - libgcc >=15
   input:
-    hash: a9f72bcbf49cf6e5d95b4b0011be89ed077c42a9108787e04c8e3e0908e4e0e9
-    globs:
-    - pixi.toml
+    hash: 0617cb64d77a79ec05ab30b34f5a40f162f520c84bc2882f1c71dd672c9a8c51
+    globs: []
 - conda: .
   name: simple-app
   version: 0.1.0
@@ -117,9 +116,8 @@ packages:
   depends:
   - libcxx >=20
   input:
-    hash: a9f72bcbf49cf6e5d95b4b0011be89ed077c42a9108787e04c8e3e0908e4e0e9
-    globs:
-    - pixi.toml
+    hash: 0617cb64d77a79ec05ab30b34f5a40f162f520c84bc2882f1c71dd672c9a8c51
+    globs: []
 - conda: .
   name: simple-app
   version: 0.1.0
@@ -128,21 +126,20 @@ packages:
   depends:
   - libcxx >=20
   input:
-    hash: a9f72bcbf49cf6e5d95b4b0011be89ed077c42a9108787e04c8e3e0908e4e0e9
-    globs:
-    - pixi.toml
+    hash: 0617cb64d77a79ec05ab30b34f5a40f162f520c84bc2882f1c71dd672c9a8c51
+    globs: []
 - conda: .
   name: simple-app
   version: 0.1.0
   build: hbf21a9e_0
   subdir: win-64
   depends:
-  - vc >=14.1,<15
-  - vc14_runtime >=14.16.27033
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
   input:
-    hash: a9f72bcbf49cf6e5d95b4b0011be89ed077c42a9108787e04c8e3e0908e4e0e9
-    globs:
-    - pixi.toml
+    hash: 0617cb64d77a79ec05ab30b34f5a40f162f520c84bc2882f1c71dd672c9a8c51
+    globs: []
 - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
   sha256: db8dead3dd30fb1a032737554ce91e2819b43496a0db09927edf01c32b577450
   md5: 6797b005cd0f439c4c5c9ac565783700

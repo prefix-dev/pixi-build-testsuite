@@ -23,9 +23,8 @@ packages:
   constrains:
   - __glibc >=2.17
   input:
-    hash: 62e0b53765e23b6a564ee83af65409e1d924dec3ac8d5bbe9bb78908f5665c63
-    globs:
-    - pixi.toml
+    hash: defb77008d1b09c2d85d33820c2f1a72696a43e3f57fe67e011f87877adf3af5
+    globs: []
 - conda: .
   name: simple-app
   version: 0.1.0
@@ -34,15 +33,13 @@ packages:
   constrains:
   - __osx >=11.0
   input:
-    hash: 62e0b53765e23b6a564ee83af65409e1d924dec3ac8d5bbe9bb78908f5665c63
-    globs:
-    - pixi.toml
+    hash: defb77008d1b09c2d85d33820c2f1a72696a43e3f57fe67e011f87877adf3af5
+    globs: []
 - conda: .
   name: simple-app
   version: 0.1.0
   build: hbf21a9e_0
   subdir: win-64
   input:
-    hash: 62e0b53765e23b6a564ee83af65409e1d924dec3ac8d5bbe9bb78908f5665c63
-    globs:
-    - pixi.toml
+    hash: defb77008d1b09c2d85d33820c2f1a72696a43e3f57fe67e011f87877adf3af5
+    globs: []
