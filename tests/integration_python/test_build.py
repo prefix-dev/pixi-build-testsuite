@@ -313,6 +313,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
+        stderr_contains="Specifying dependencies",
     )
 
 
