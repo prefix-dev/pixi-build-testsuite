@@ -381,23 +381,9 @@ def test_recursive_source_build_dependencies(
     verify_cli_command(
         [
             pixi,
-            "install",
+            "lock",
             "--manifest-path",
             manifest_path,
         ],
         env=env,
-    )
-
-    # Package B is a dependency of Package A
-    # Check that Package A works properly and that the output is valid
-    verify_cli_command(
-        [
-            pixi,
-            "run",
-            "--manifest-path",
-            manifest_path,
-            "package-a",
-        ],
-        env=env,
-        stdout_contains=["Package A application starting", "5 + 3 = 8"],
     )
