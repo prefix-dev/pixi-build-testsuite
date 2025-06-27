@@ -1,0 +1,13 @@
+[package]
+name = "package_a"
+version = "0.1.0"
+
+[package.build]
+backend = { name = "pixi-build-cmake", version = "*" }
+channels = [
+  "https://prefix.dev/pixi-build-backends",
+  "https://prefix.dev/conda-forge",
+]
+
+[package.build-dependencies]
+package_b = { path = "../package_bs" }
