@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from .common import ExitCode, Workspace, verify_cli_command, ExitCode
+from .common import ExitCode, Workspace, verify_cli_command
 
 
 def test_build_conda_package(
@@ -289,7 +289,9 @@ def test_build_using_rattler_build_backend(
 
     # load the json file
     conda_meta = (
-        (manifest_path.parent / ".pixi/envs/default/conda-meta").glob("array-api-extra-*.json").__next__()
+        (manifest_path.parent / ".pixi/envs/default/conda-meta")
+        .glob("array-api-extra-*.json")
+        .__next__()
     )
     metadata = json.loads(conda_meta.read_text())
 
@@ -302,7 +304,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
     # copy the whole smokey project to the tmp_pixi_workspace
     shutil.copytree(test_data / "smokey", tmp_pixi_workspace / "smokey")
     manifest_path = tmp_pixi_workspace / "smokey" / "pixi.toml"
-    
+
     verify_cli_command(
         [
             pixi,
