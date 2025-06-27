@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from .common import ExitCode, Workspace, verify_cli_command
+from .common import ExitCode, Workspace, verify_cli_command, ExitCode
 
 
 def test_build_conda_package(
@@ -287,29 +287,31 @@ def test_build_using_rattler_build_backend(
     assert "array-api-extra" in package_to_be_built.name
     assert package_to_be_built.exists()
 
+    # load the json file
+    conda_meta = (
+        (manifest_path.parent / ".pixi/envs/default/conda-meta").glob("array-api-extra-*.json").__next__()
+    )
+    metadata = json.loads(conda_meta.read_text())
+
+    assert metadata["name"] == "array-api-extra"
+
 
 @pytest.mark.slow
-def test_smokey(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey project to the tmp_pixi_workspace
     shutil.copytree(test_data / "smokey", tmp_pixi_workspace / "smokey")
     manifest_path = tmp_pixi_workspace / "smokey" / "pixi.toml"
+    
     verify_cli_command(
         [
             pixi,
             "install",
             "--manifest-path",
             manifest_path,
-        ]
+        ],
+        expected_exit_code=ExitCode.FAILURE,
     )
-
-    # load the json file
-    conda_meta = (
-        (manifest_path.parent / ".pixi/envs/default/conda-meta").glob("smokey-*.json").__next__()
-    )
-    metadata = json.loads(conda_meta.read_text())
-
-    assert metadata["name"] == "smokey"
 
 
 @pytest.mark.slow

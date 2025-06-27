@@ -16,5 +16,5 @@ channels = [
   "https://prefix.dev/conda-forge",
 ]
 
-# [package.host-dependencies]
-# hatchling = "*"
+[package.host-dependencies]
+hatchling = "*"
