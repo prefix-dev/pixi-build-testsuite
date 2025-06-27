@@ -272,12 +272,9 @@ def test_build_using_rattler_build_backend(
     build_data: Path,
 ) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
-    shutil.copytree(test_data / "pixi", tmp_pixi_workspace / "pixi")
-    shutil.copyfile(
-        test_data / "recipes/smokey/recipe.yaml", tmp_pixi_workspace / "pixi/recipe.yaml"
-    )
+    shutil.copytree(test_data / "array-api-extra", tmp_pixi_workspace / "array-api-extra")
 
-    manifest_path = tmp_pixi_workspace / "pixi" / "pixi.toml"
+    manifest_path = tmp_pixi_workspace / "array-api-extra/pixi.toml"
 
     # Running pixi build should build the recipe.yaml
     verify_cli_command(
@@ -287,7 +284,7 @@ def test_build_using_rattler_build_backend(
     # really make sure that conda package was built
     package_to_be_built = next(manifest_path.parent.glob("*.conda"))
 
-    assert "smokey" in package_to_be_built.name
+    assert "array-api-extra" in package_to_be_built.name
     assert package_to_be_built.exists()
 
 
@@ -295,8 +292,8 @@ def test_build_using_rattler_build_backend(
 def test_smokey(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey project to the tmp_pixi_workspace
-    shutil.copytree(test_data, tmp_pixi_workspace / "test_data")
-    manifest_path = tmp_pixi_workspace / "test_data" / "smokey" / "pixi.toml"
+    shutil.copytree(test_data / "smokey", tmp_pixi_workspace / "smokey")
+    manifest_path = tmp_pixi_workspace / "smokey" / "pixi.toml"
     verify_cli_command(
         [
             pixi,
