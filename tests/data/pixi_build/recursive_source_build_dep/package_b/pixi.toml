@@ -1,5 +1,5 @@
 [package]
-name = "package-b"
+name = "package_b"
 version = "0.1.0"
 
 [package.build]
