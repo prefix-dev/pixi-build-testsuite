@@ -1,5 +1,5 @@
-lint.fixable = ["I"]
 line-length = 100
+lint.fixable = ["I"]
 
 [format]
 indent-style = "space"
