@@ -286,6 +286,11 @@ def test_build_using_rattler_build_backend(
     assert "array-api-extra" in package_to_be_built.name
     assert package_to_be_built.exists()
 
+    # Check install
+    verify_cli_command(
+        [pixi, "install", "--manifest-path", manifest_path],
+    )
+
     # load the json file
     conda_meta = (
         (manifest_path.parent / ".pixi/envs/default/conda-meta")
