@@ -316,7 +316,9 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
     )
 
 
-def test_error_manifest_deps_no_default(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+def test_error_manifest_deps_no_default(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey2 project to the tmp_pixi_workspace
     shutil.copytree(test_data / "smokey2", tmp_pixi_workspace / "smokey2")
