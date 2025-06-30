@@ -1,4 +1,4 @@
-fixable = ["I"]
+lint.fixable = ["I"]
 line-length = 100
 
 [format]
