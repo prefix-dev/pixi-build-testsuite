@@ -147,7 +147,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
     assert conda_build_params.is_file()
 
 
-def test_host_dependency_change_trigger_rebuild(
+def test_project_model_change_trigger_rebuild(
     pixi: Path, simple_workspace: Workspace, dummy_channel_1: Path
 ) -> None:
     simple_workspace.write_files()
@@ -167,11 +167,10 @@ def test_host_dependency_change_trigger_rebuild(
     # Remove the conda build params to get a clean state
     conda_build_params.unlink()
 
-    # Add dummy-b to host-dependencies
-    simple_workspace.package_manifest["package"].setdefault("host-dependencies", {})["dummy-b"] = {
-        "version": "*",
-        "channel": dummy_channel_1,
-    }
+    # modify extra-input-globs
+    simple_workspace.package_manifest["package"]["build"]["configuration"].setdefault(
+        "extra-input-globs", ["*.md"]
+    )
     simple_workspace.write_files()
     verify_cli_command(
         [
@@ -182,7 +181,7 @@ def test_host_dependency_change_trigger_rebuild(
         ],
     )
 
-    # modifying the host-dependencies should trigger a rebuild and therefore create a file
+    # modifying the project model should trigger a rebuild and therefore create a file
     assert conda_build_params.is_file()
 
 
