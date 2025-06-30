@@ -298,12 +298,29 @@ def test_build_using_rattler_build_backend(
     assert metadata["name"] == "array-api-extra"
 
 
-@pytest.mark.slow
 def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey project to the tmp_pixi_workspace
     shutil.copytree(test_data / "smokey", tmp_pixi_workspace / "smokey")
     manifest_path = tmp_pixi_workspace / "smokey" / "pixi.toml"
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "--manifest-path",
+            manifest_path,
+        ],
+        expected_exit_code=ExitCode.FAILURE,
+        stderr_contains="Specifying dependencies",
+    )
+
+
+def test_error_manifest_deps_no_default(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    shutil.copytree(test_data / "smokey2", tmp_pixi_workspace / "smokey2")
+    manifest_path = tmp_pixi_workspace / "smokey2" / "pixi.toml"
 
     verify_cli_command(
         [

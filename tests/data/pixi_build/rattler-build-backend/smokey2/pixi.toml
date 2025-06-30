@@ -1,13 +1,13 @@
 [project]
 channels = ["conda-forge"]
 description = "Add a short description here"
-name = "smokey-build"
+name = "smokey2-build"
 platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
 preview = ["pixi-build"]
 version = "0.1.0"
 
 [dependencies]
-smokey = { path = "." }
+smokey2 = { path = "." }
 
 [package.build]
 backend = { name = "pixi-build-rattler-build", version = "0.1.*" }
@@ -16,6 +16,6 @@ channels = [
   "https://prefix.dev/conda-forge",
 ]
 
-# dep for default target
-[package.host-dependencies]
+# No deps for default target, but dep for linux64 target
+[package.target.linux-64.host-dependencies]
 hatchling = "*"
