@@ -35,9 +35,11 @@ class PixiBuildError(Exception):
     pass
 
 
-def run_command(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
+def run_command(
+    cmd: list[str], cwd: Path | None = None, capture_output: bool = False
+) -> tuple[int, str, str]:
     """Run a command and return exit code, stdout, and stderr."""
-    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    result = subprocess.run(cmd, cwd=cwd, capture_output=capture_output, text=True)
     return result.returncode, result.stdout, result.stderr
 
 
@@ -120,7 +122,7 @@ def main() -> None:
     # Load environment variables from .env file
     env_file = Path(__file__).parent.parent / ".env"
     if env_file.exists():
-        load_dotenv(env_file)
+        load_dotenv(env_file, override=True)
         print(f"✅ Loaded environment variables from {env_file}")
     else:
         print(f"⚠️  No .env file found at {env_file}")

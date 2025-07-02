@@ -79,7 +79,7 @@ def simple_workspace(tmp_pixi_workspace: Path, request: pytest.FixtureRequest) -
 
 @pytest.fixture(scope="session", autouse=True)
 def load_dotenv() -> None:
-    dotenv.load_dotenv()
+    dotenv.load_dotenv(override=True)
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -122,7 +122,7 @@ def pixi() -> Path:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def build_backends(load_dotenv: None) -> None:
+def build_backends(_load_dotenv: None) -> None:
     """
     Sets up build backend environment variables for testing.
 
