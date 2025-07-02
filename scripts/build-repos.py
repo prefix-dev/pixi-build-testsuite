@@ -36,7 +36,7 @@ class PixiBuildError(Exception):
 
 
 def run_command(
-    cmd: list[str], cwd: Path | None = None, capture_output: bool = False
+    cmd: list[str], cwd: Path | None = None, capture_output: bool = True
 ) -> tuple[int, str, str]:
     """Run a command and return exit code, stdout, and stderr."""
     result = subprocess.run(cmd, cwd=cwd, capture_output=capture_output, text=True)
