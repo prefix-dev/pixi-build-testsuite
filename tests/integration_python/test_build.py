@@ -147,7 +147,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
     assert conda_build_params.is_file()
 
 
-def test_host_dependency_change_trigger_rebuild(
+def test_project_model_change_trigger_rebuild(
     pixi: Path, simple_workspace: Workspace, dummy_channel_1: Path
 ) -> None:
     simple_workspace.write_files()
@@ -167,11 +167,10 @@ def test_host_dependency_change_trigger_rebuild(
     # Remove the conda build params to get a clean state
     conda_build_params.unlink()
 
-    # Add dummy-b to host-dependencies
-    simple_workspace.package_manifest["package"].setdefault("host-dependencies", {})["dummy-b"] = {
-        "version": "*",
-        "channel": dummy_channel_1,
-    }
+    # modify extra-input-globs
+    simple_workspace.package_manifest["package"]["build"]["configuration"].setdefault(
+        "extra-input-globs", ["*.md"]
+    )
     simple_workspace.write_files()
     verify_cli_command(
         [
@@ -182,7 +181,7 @@ def test_host_dependency_change_trigger_rebuild(
         ],
     )
 
-    # modifying the host-dependencies should trigger a rebuild and therefore create a file
+    # modifying the project model should trigger a rebuild and therefore create a file
     assert conda_build_params.is_file()
 
 
@@ -272,47 +271,58 @@ def test_build_using_rattler_build_backend(
     build_data: Path,
 ) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
-    shutil.copytree(test_data / "pixi", tmp_pixi_workspace / "pixi")
-    shutil.copyfile(
-        test_data / "recipes/smokey/recipe.yaml", tmp_pixi_workspace / "pixi/recipe.yaml"
-    )
+    shutil.copytree(test_data / "array-api-extra", tmp_pixi_workspace, dirs_exist_ok=True)
 
-    manifest_path = tmp_pixi_workspace / "pixi" / "pixi.toml"
+    manifest_path = tmp_pixi_workspace / "pixi.toml"
 
     # Running pixi build should build the recipe.yaml
     verify_cli_command(
-        [pixi, "build", "--manifest-path", manifest_path, "--output-dir", manifest_path.parent],
+        [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )
 
     # really make sure that conda package was built
     package_to_be_built = next(manifest_path.parent.glob("*.conda"))
 
-    assert "smokey" in package_to_be_built.name
+    assert "array-api-extra" in package_to_be_built.name
     assert package_to_be_built.exists()
 
 
-@pytest.mark.slow
-def test_smokey(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey project to the tmp_pixi_workspace
-    shutil.copytree(test_data, tmp_pixi_workspace / "test_data")
-    manifest_path = tmp_pixi_workspace / "test_data" / "smokey" / "pixi.toml"
+    shutil.copytree(test_data / "smokey", tmp_pixi_workspace / "smokey")
+    manifest_path = tmp_pixi_workspace / "smokey" / "pixi.toml"
+
     verify_cli_command(
         [
             pixi,
             "install",
             "--manifest-path",
             manifest_path,
-        ]
+        ],
+        expected_exit_code=ExitCode.FAILURE,
+        stderr_contains="Specifying dependencies",
     )
 
-    # load the json file
-    conda_meta = (
-        (manifest_path.parent / ".pixi/envs/default/conda-meta").glob("smokey-*.json").__next__()
-    )
-    metadata = json.loads(conda_meta.read_text())
 
-    assert metadata["name"] == "smokey"
+def test_error_manifest_deps_no_default(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    shutil.copytree(test_data / "smokey2", tmp_pixi_workspace / "smokey2")
+    manifest_path = tmp_pixi_workspace / "smokey2" / "pixi.toml"
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "--manifest-path",
+            manifest_path,
+        ],
+        expected_exit_code=ExitCode.FAILURE,
+        stderr_contains="Specifying dependencies",
+    )
 
 
 @pytest.mark.slow
