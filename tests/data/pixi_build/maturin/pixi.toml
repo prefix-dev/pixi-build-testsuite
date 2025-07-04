@@ -10,7 +10,7 @@ preview = ["pixi-build"]
 version = "0.1.0"
 
 [tasks]
-start = 'python -c "import fast_math; fast_math.main()'
+start = 'python -c "import fast_math; fast_math.main()"'
 
 [dependencies]
 fast_math = { path = "." }

@@ -366,8 +366,9 @@ def test_maturin(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None
         [
             pixi,
             "run",
-            "start--manifest-path",
+            "--manifest-path",
             manifest_path,
+            "start",
         ],
         stdout_contains="3 + 5 = 8",
     )
