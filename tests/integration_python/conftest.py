@@ -58,7 +58,7 @@ def simple_workspace(tmp_pixi_workspace: Path, request: pytest.FixtureRequest) -
             "build": {
                 "backend": {"name": "pixi-build-rattler-build", "version": "0.1.*"},
                 "configuration": {"debug-dir": str(debug_dir)},
-            }
+            },
         },
     }
 
