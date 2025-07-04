@@ -8,7 +8,7 @@ preview = ["pixi-build"]
 smokey2 = { path = "." }
 
 [package]
-name = "smokey2-build"
+name = "smokey2"
 version = "0.1.0"
 
 [package.build]
