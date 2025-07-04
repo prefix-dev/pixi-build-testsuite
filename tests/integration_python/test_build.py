@@ -74,18 +74,13 @@ def test_build_conda_package_variants(
 
 def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspace) -> None:
     simple_workspace.write_files()
-    # Setting PIXI_CACHE_DIR shouldn't be necessary
-    env = {
-        "PIXI_CACHE_DIR": str(simple_workspace.workspace_dir.joinpath("pixi_cache")),
-    }
     verify_cli_command(
         [
             pixi,
             "install",
             "--manifest-path",
             simple_workspace.workspace_dir,
-        ],
-        env=env,
+        ]
     )
 
     conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_metadata_params.json")
@@ -104,8 +99,7 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
             "install",
             "--manifest-path",
             simple_workspace.workspace_dir,
-        ],
-        env=env,
+        ]
     )
 
     # Everything should be cached, so no getMetadata or build call
@@ -233,10 +227,8 @@ def test_non_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace
     shutil.copytree(test_data, target_dir)
     manifest_path = target_dir.joinpath("pyproject.toml")
 
-    # TODO: Setting the cache dir shouldn't be necessary!
     env = {
         "BUILD_EDITABLE_PYTHON": "false",
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
     }
 
     verify_cli_command(
@@ -339,11 +331,6 @@ def test_recursive_source_run_dependencies(
     shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
     manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
 
-    # TODO: Setting the cache dir shouldn't be necessary!
-    env = {
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
-    }
-
     verify_cli_command(
         [
             pixi,
@@ -351,7 +338,6 @@ def test_recursive_source_run_dependencies(
             "--manifest-path",
             manifest_path,
         ],
-        env=env,
     )
 
     # Package B is a dependency of Package A
@@ -364,7 +350,6 @@ def test_recursive_source_run_dependencies(
             manifest_path,
             "package-b",
         ],
-        env=env,
         stdout_contains="hello from package-b",
     )
 
