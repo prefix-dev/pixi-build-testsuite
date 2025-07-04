@@ -362,11 +362,6 @@ def test_maturin(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None
     shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
     manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
 
-    # TODO: Setting the cache dir shouldn't be necessary!
-    env = {
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
-    }
-
     verify_cli_command(
         [
             pixi,
@@ -374,6 +369,5 @@ def test_maturin(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None
             "start--manifest-path",
             manifest_path,
         ],
-        env=env,
         stdout_contains="3 + 5 = 8",
     )
