@@ -1,5 +1,4 @@
 [workspace]
-authors = ["Julian Hofer <julianhofer@gnome.org>"]
 channels = [
   "https://prefix.dev/pixi-build-backends",
   "https://prefix.dev/conda-forge",
@@ -18,6 +17,7 @@ start = "simple-app"
 [package]
 name = "simple-app"
 version = "0.1.0"
+authors = ["Julian Hofer <julianhofer@gnome.org>"]
 
 [package.build]
 backend = { name = "pixi-build-rust", version = "*" }
