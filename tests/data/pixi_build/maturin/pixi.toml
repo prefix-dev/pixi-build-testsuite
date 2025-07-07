@@ -8,7 +8,7 @@ platforms = ["linux-64", "osx-arm64", "win-64"]
 preview = ["pixi-build"]
 
 [tasks]
-start = 'python -c "import fast_math; fast_math.main()"'
+start = 'python -m fast_math'
 
 [dependencies]
 fast_math = { path = "." }
@@ -20,6 +20,9 @@ version = "0.1.0"
 [package.build.backend]
 name = "pixi-build-python"
 version = "*"
+
+[package.build.configuration]
+noarch = false
 
 [package.build-dependencies]
 rust = "*"
