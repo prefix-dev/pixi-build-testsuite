@@ -203,19 +203,10 @@ def download_github_artifact(
 
         console.print(f"[blue]Found workflow: {target_workflow.name}")
 
-        # Get latest successful workflow run from main branch
-        console.print("[blue]Finding latest successful workflow run from main branch")
-        runs = target_workflow.get_runs(branch="main", status="completed")
-
-        selected_run = None
-        for run in runs:
-            if run.conclusion == "success":
-                selected_run = run
-                break
-
-        if not selected_run:
-            console.print("[red]No successful workflow runs found on main branch")
-            raise ValueError("No successful workflow runs found on main branch")
+        # Get latest workflow run from main branch
+        console.print("[blue]Finding latest workflow run from main branch")
+        runs = target_workflow.get_runs(branch="main")
+        selected_run = runs[-1]
 
     assert selected_run is not None
     console.print(f"[blue]Selected run: {selected_run.id} from {selected_run.created_at}")
