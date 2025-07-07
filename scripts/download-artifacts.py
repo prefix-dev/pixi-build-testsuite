@@ -206,7 +206,7 @@ def download_github_artifact(
 
         # Get latest workflow run from main branch
         console.print("[blue]Finding latest workflow run from main branch")
-        runs = target_workflow.get_runs(branch="main")
+        runs = target_workflow.get_runs(branch="main", event="push")
         selected_run = runs[0]
 
     assert selected_run is not None
