@@ -50,7 +50,7 @@ def test_build_git_source_deps(pixi: Path, tmp_pixi_workspace: Path, build_data:
     )
 
     # build it
-    verify_cli_command([pixi, "install", "--manifest-path", minimal_workspace / "pixi.toml"])
+    verify_cli_command([pixi, "install", "-v", "--manifest-path", minimal_workspace / "pixi.toml"])
 
     # verify that we indeed recorded the git url with it's commit
     pixi_lock_file = minimal_workspace / "pixi.lock"
@@ -73,7 +73,7 @@ def test_build_git_source_deps(pixi: Path, tmp_pixi_workspace: Path, build_data:
     ).stdout.strip()
 
     # build it again
-    verify_cli_command([pixi, "update", "--manifest-path", minimal_workspace / "pixi.toml"])
+    verify_cli_command([pixi, "update", "-v", "--manifest-path", minimal_workspace / "pixi.toml"])
 
     # verify that we indeed recorded the git url with it's commit
     pixi_lock_file = minimal_workspace / "pixi.lock"

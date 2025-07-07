@@ -18,9 +18,6 @@ from .common import get_manifest, repo_root, verify_cli_command
     ],
 )
 def test_pixi_minimal_backend(pixi_project: Path, pixi: Path, tmp_pixi_workspace: Path) -> None:
-    env = {
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
-    }
     # Remove existing .pixi folders
     shutil.rmtree(pixi_project.joinpath(".pixi"), ignore_errors=True)
 
@@ -32,7 +29,6 @@ def test_pixi_minimal_backend(pixi_project: Path, pixi: Path, tmp_pixi_workspace
 
     # Install the environment
     verify_cli_command(
-        [pixi, "run", "--locked", "--manifest-path", manifest, "start"],
-        env=env,
+        [pixi, "run", "-v", "--locked", "--manifest-path", manifest, "start"],
         stdout_contains="Build backend works",
     )
