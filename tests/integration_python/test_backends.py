@@ -29,6 +29,6 @@ def test_pixi_minimal_backend(pixi_project: Path, pixi: Path, tmp_pixi_workspace
 
     # Install the environment
     verify_cli_command(
-        [pixi, "run", "--locked", "--manifest-path", manifest, "start"],
+        [pixi, "run", "-v", "--locked", "--manifest-path", manifest, "start"],
         stdout_contains="Build backend works",
     )

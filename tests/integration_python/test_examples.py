@@ -32,4 +32,4 @@ def test_pixi_install_examples(pixi_project: Path, pixi: Path, tmp_pixi_workspac
     manifest = get_manifest(tmp_pixi_workspace)
 
     # Install the environment
-    verify_cli_command([pixi, "install", "--locked", "--manifest-path", manifest])
+    verify_cli_command([pixi, "install", "-v", "--locked", "--manifest-path", manifest])
