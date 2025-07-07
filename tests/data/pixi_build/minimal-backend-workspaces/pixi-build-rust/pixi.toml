@@ -15,9 +15,9 @@ simple-app = { path = "." }
 start = "simple-app"
 
 [package]
+authors = ["Julian Hofer <julianhofer@gnome.org>"]
 name = "simple-app"
 version = "0.1.0"
-authors = ["Julian Hofer <julianhofer@gnome.org>"]
 
 [package.build]
 backend = { name = "pixi-build-rust", version = "*" }
