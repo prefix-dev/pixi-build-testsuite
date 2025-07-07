@@ -52,7 +52,7 @@ go-shfmt = ">=3.11.0,<4"
 pre-commit = ">=4.1.0,<5"
 pre-commit-hooks = ">=5.0.0,<6"
 prettier = ">=3.5.2,<4"
-ruff = ">=0.11.5,<0.12"
+ruff = ">=0.12.2,<0.13"
 shellcheck = ">=0.10.0,<0.11"
 taplo = ">=0.10,<0.11"
 typos = ">=1.29.10,<2"
@@ -75,7 +75,7 @@ typos = "typos --write-changes --force-exclude"
 # Feature to build recipes
 #
 [feature.recipes.dependencies]
-rattler-build = ">=0.43,<0.44"
+rattler-build = ">=0.44,<0.45"
 
 [feature.recipes.tasks.build-backends]
 cmd = "rattler-build build --recipe-dir empty --output-dir ."

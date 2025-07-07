@@ -16,6 +16,7 @@ def test_build_conda_package(
         [
             pixi,
             "build",
+            "-v",
             "--manifest-path",
             simple_workspace.package_dir,
             "--output-dir",
@@ -53,6 +54,7 @@ def test_build_conda_package_variants(
         [
             pixi,
             "build",
+            "-v",
             "--manifest-path",
             simple_workspace.package_dir,
             "--output-dir",
@@ -78,6 +80,7 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ]
@@ -97,6 +100,7 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ]
@@ -113,6 +117,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
@@ -132,6 +137,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
@@ -149,6 +155,7 @@ def test_project_model_change_trigger_rebuild(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
@@ -170,6 +177,7 @@ def test_project_model_change_trigger_rebuild(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
@@ -196,6 +204,7 @@ def test_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace: Pa
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -206,6 +215,7 @@ def test_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace: Pa
         [
             pixi,
             "run",
+            "-v",
             "--manifest-path",
             manifest_path,
             "check-editable",
@@ -235,6 +245,7 @@ def test_non_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -246,6 +257,7 @@ def test_non_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace
         [
             pixi,
             "run",
+            "-v",
             "--manifest-path",
             manifest_path,
             "check-editable",
@@ -269,7 +281,7 @@ def test_build_using_rattler_build_backend(
 
     # Running pixi build should build the recipe.yaml
     verify_cli_command(
-        [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )
 
     # really make sure that conda package was built
@@ -289,6 +301,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -309,6 +322,7 @@ def test_error_manifest_deps_no_default(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -335,6 +349,7 @@ def test_recursive_source_run_dependencies(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -346,6 +361,7 @@ def test_recursive_source_run_dependencies(
         [
             pixi,
             "run",
+            "-v",
             "--manifest-path",
             manifest_path,
             "package-b",

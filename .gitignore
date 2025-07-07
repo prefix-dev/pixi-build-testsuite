@@ -12,4 +12,4 @@ pytest-temp
 /vendor
 .env
 artifacts
-CLAUDE.local.md
+*.local.*

@@ -7,6 +7,7 @@ import zipfile
 from pathlib import Path
 
 import httpx
+from dotenv import load_dotenv
 from github import Github
 from github.Artifact import Artifact
 from rich.console import Console
@@ -203,19 +204,10 @@ def download_github_artifact(
 
         console.print(f"[blue]Found workflow: {target_workflow.name}")
 
-        # Get latest successful workflow run from main branch
-        console.print("[blue]Finding latest successful workflow run from main branch")
-        runs = target_workflow.get_runs(branch="main", status="completed")
-
-        selected_run = None
-        for run in runs:
-            if run.conclusion == "success":
-                selected_run = run
-                break
-
-        if not selected_run:
-            console.print("[red]No successful workflow runs found on main branch")
-            raise ValueError("No successful workflow runs found on main branch")
+        # Get latest workflow run from main branch
+        console.print("[blue]Finding latest workflow run from main branch")
+        runs = target_workflow.get_runs(branch="main", event="push")
+        selected_run = runs[0]
 
     assert selected_run is not None
     console.print(f"[blue]Selected run: {selected_run.id} from {selected_run.created_at}")
@@ -259,10 +251,13 @@ def download_github_artifact(
 
 
 def main() -> None:
+    # Load environment variables from .env file
+    load_dotenv()
+
     parser = argparse.ArgumentParser(description="Download artifacts from GitHub Actions")
     parser.add_argument(
         "--token",
-        help="GitHub token for authentication (can also use GITHUB_TOKEN env var)",
+        help="GitHub token for authentication (can also use GITHUB_TOKEN env var or .env file)",
     )
     parser.add_argument(
         "--run-id",
@@ -292,7 +287,9 @@ def main() -> None:
     github_token = args.token or os.getenv("GITHUB_TOKEN")
     if not github_token:
         console.print("[red][ERROR] No GitHub token provided")
-        console.print("[red]  Set GITHUB_TOKEN environment variable or use --token argument")
+        console.print(
+            "[red]  Set GITHUB_TOKEN environment variable, use --token argument, or create a .env file"
+        )
         sys.exit()
 
     try:
