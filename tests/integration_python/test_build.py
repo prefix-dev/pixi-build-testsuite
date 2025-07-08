@@ -368,3 +368,33 @@ def test_recursive_source_run_dependencies(
         ],
         stdout_contains="hello from package-b",
     )
+
+
+@pytest.mark.slow
+def test_recursive_source_build_dependencies(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    """
+    Test whether recursive source dependencies work properly if
+    they are specified in the `host-dependencies` section
+    """
+    project = "recursive_source_build_dep"
+    test_data = build_data.joinpath(project)
+
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
+    manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
+
+    # TODO: Setting the cache dir shouldn't be necessary!
+    env = {
+        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
+    }
+
+    verify_cli_command(
+        [
+            pixi,
+            "lock",
+            "--manifest-path",
+            manifest_path,
+        ],
+        env=env,
+    )
