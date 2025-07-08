@@ -12,6 +12,7 @@ start = 'python -m fast_math'
 
 [dependencies]
 fast_math = { path = "." }
+python = "*"
 
 [package]
 name = "fast_math"
