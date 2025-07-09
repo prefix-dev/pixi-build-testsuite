@@ -4,7 +4,7 @@ Script to update pixi.lock files in test directories.
 
 This script:
 1. Recursively searches for pixi.lock files in tests/data/pixi_build (or specified directory)
-2. Runs `pixi install` in each directory containing a pixi.lock file
+2. Runs `pixi lock` in each directory containing a pixi.lock file
 3. Stops execution on the first error encountered
 4. Accepts optional command-line argument to specify a specific subdirectory to process
 """
@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 
 
-class PixiInstallError(Exception):
-    """Raised when pixi install fails."""
+class PixiLockError(Exception):
+    """Raised when pixi lock fails."""
     pass
 
 
@@ -28,26 +28,26 @@ def run_command(
     return result.returncode, result.stdout, result.stderr
 
 
-def pixi_install(directory: Path) -> None:
-    """Run pixi install in the specified directory."""
-    print(f"🔄 Running pixi install in {directory}")
-    returncode, stdout, stderr = run_command(["pixi", "install"], cwd=directory)
-    
+def pixi_lock(directory: Path) -> None:
+    """Run pixi lock in the specified directory."""
+    print(f"🔄 Running pixi lock in {directory}")
+    returncode, stdout, stderr = run_command(["pixi", "lock"], cwd=directory)
+
     if returncode == 0:
         print(f"✅ Successfully updated lockfile in {directory}")
         if stdout.strip():
             print(f"   {stdout.strip()}")
     else:
-        error_msg = f"Failed to run pixi install in {directory}"
+        error_msg = f"Failed to run pixi lock in {directory}"
         if stderr:
             error_msg += f": {stderr}"
         if stdout:
             error_msg += f" (Output: {stdout})"
-        raise PixiInstallError(error_msg)
+        raise PixiLockError(error_msg)
 
 
 def find_and_process_lockfiles(base_path: Path) -> None:
-    """Recursively find directories with pixi.lock files and run pixi install."""
+    """Recursively find directories with pixi.lock files and run pixi lock."""
     if not base_path.exists():
         print(f"❌ Directory {base_path} does not exist")
         sys.exit(1)
@@ -75,8 +75,8 @@ def find_and_process_lockfiles(base_path: Path) -> None:
         print(f"{'=' * 60}")
         
         try:
-            pixi_install(directory)
-        except PixiInstallError as e:
+            pixi_lock(directory)
+        except PixiLockError as e:
             print(f"❌ {e}")
             sys.exit(1)
 
@@ -84,7 +84,7 @@ def find_and_process_lockfiles(base_path: Path) -> None:
 def main() -> None:
     """Main function to process lockfiles."""
     parser = argparse.ArgumentParser(
-        description="Update pixi.lock files by running pixi install",
+        description="Update pixi.lock files by running pixi lock",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
