@@ -42,7 +42,7 @@ test-specific-test = { cmd = "pytest -k '{{ test_substring }}'", args = [
 build-repos = { cmd = "python scripts/build-repos.py", description = "Update and build external repositories (PIXI and BUILD_BACKENDS)" }
 download-artifacts = { cmd = "python scripts/download-artifacts.py" }
 update-lockfiles = { cmd = "python scripts/update-lockfiles.py {{ folder }}", args = [
-  { "arg"= "folder", "default"= "" }
+  { "arg" = "folder", "default" = "" },
 ], description = "Update pixi.lock files by running pixi lock in test directories" }
 update-test-channel = { cmd = "python update-channels.py {{ channel }}", args = [
   "channel",

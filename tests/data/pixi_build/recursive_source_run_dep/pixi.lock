@@ -28,7 +28,6 @@ environments:
       - conda: https://prefix.dev/conda-forge/linux-64/tk-8.6.13-noxft_h4845f30_101.conda
       - conda: https://prefix.dev/conda-forge/noarch/tzdata-2025a-h78e105d_0.conda
       - conda: package_a
-        build: pyhbf21a9e_0
       - conda: package_b
         build: hb0f4dca_0
       osx-arm64:
@@ -48,7 +47,6 @@ environments:
       - conda: https://prefix.dev/conda-forge/osx-arm64/tk-8.6.13-h892fb3f_2.conda
       - conda: https://prefix.dev/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: package_a
-        build: pyh4616a5c_0
       - conda: package_b
         build: h60d57d3_0
       win-64:
@@ -69,7 +67,6 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_26.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_26.conda
       - conda: package_a
-        build: pyh4616a5c_0
       - conda: package_b
         build: h9490d1a_0
 packages:
@@ -464,21 +461,7 @@ packages:
   - python
   - python
   input:
-    hash: 2ec8fad1b6da0e7490a7a76518264f118c0508911c3f2ea1da17a9e86dffa071
-    globs: []
-  sources:
-    package_b:
-      path: ../package_b
-- conda: package_a
-  name: package_a
-  version: 0.1.0
-  build: pyhbf21a9e_0
-  subdir: noarch
-  depends:
-  - package_b
-  - python
-  input:
-    hash: 2ec8fad1b6da0e7490a7a76518264f118c0508911c3f2ea1da17a9e86dffa071
+    hash: 2a1131298c1eb63e9c49f06140c1b99373664fd7bdfe3b27d4adce9d5fb039ff
     globs: []
   sources:
     package_b:
@@ -489,7 +472,7 @@ packages:
   build: h60d57d3_0
   subdir: osx-arm64
   input:
-    hash: 8d4cbb34f36a624caca88061209ab75ec61e693edd83f11b766ccaed00e2bb74
+    hash: 5f64acf745538e7dcf3b5cad63f06b27be4ea3c661167ccbc99b039dfaeafa74
     globs:
     - recipe.yaml
 - conda: package_b
@@ -498,7 +481,7 @@ packages:
   build: h9490d1a_0
   subdir: win-64
   input:
-    hash: 8d4cbb34f36a624caca88061209ab75ec61e693edd83f11b766ccaed00e2bb74
+    hash: 5f64acf745538e7dcf3b5cad63f06b27be4ea3c661167ccbc99b039dfaeafa74
     globs:
     - recipe.yaml
 - conda: package_b
@@ -507,7 +490,7 @@ packages:
   build: hb0f4dca_0
   subdir: linux-64
   input:
-    hash: 8d4cbb34f36a624caca88061209ab75ec61e693edd83f11b766ccaed00e2bb74
+    hash: 5f64acf745538e7dcf3b5cad63f06b27be4ea3c661167ccbc99b039dfaeafa74
     globs:
     - recipe.yaml
 - conda: https://prefix.dev/conda-forge/linux-64/python-3.13.2-hf636f53_101_cp313.conda
