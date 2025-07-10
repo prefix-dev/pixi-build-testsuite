@@ -11,8 +11,8 @@ set_target_properties(package-a-app PROPERTIES
 )
 
 # Find and link against package_b library
-find_library(PACKAGE_B_LIB package-b REQUIRED)
-target_link_libraries(package-a-app ${PACKAGE_B_LIB})
+find_package(package-b REQUIRED)
+target_link_libraries(package-a-app package-b)
 
 # Install the executable
 install(TARGETS package-a-app
