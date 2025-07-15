@@ -10,7 +10,7 @@ requires-pixi = ">=0.45"
 filelock = ">=3.16.0,<4"
 git = "==2.49.0"
 httpx = ">=0.28.0,<1"
-mypy = ">=1.16,<1.17"
+mypy = ">=1.17,<1.18"
 py-rattler = ">=0.14,<0.15"
 pygithub = ">=2.5.0,<3"
 pytest = "*"
@@ -41,6 +41,9 @@ test-specific-test = { cmd = "pytest -k '{{ test_substring }}'", args = [
 # e.g. "multiple_versions_channel_1"
 build-repos = { cmd = "python scripts/build-repos.py", description = "Update and build external repositories (PIXI and BUILD_BACKENDS)" }
 download-artifacts = { cmd = "python scripts/download-artifacts.py" }
+update-lockfiles = { cmd = "python scripts/update-lockfiles.py {{ folder }}", args = [
+  { "arg" = "folder", "default" = "" },
+], description = "Update pixi.lock files by running pixi lock in test directories" }
 update-test-channel = { cmd = "python update-channels.py {{ channel }}", args = [
   "channel",
 ], cwd = "tests/data/channels" }
@@ -52,7 +55,7 @@ go-shfmt = ">=3.11.0,<4"
 pre-commit = ">=4.1.0,<5"
 pre-commit-hooks = ">=5.0.0,<6"
 prettier = ">=3.5.2,<4"
-ruff = ">=0.11.5,<0.12"
+ruff = ">=0.12.2,<0.13"
 shellcheck = ">=0.10.0,<0.11"
 taplo = ">=0.10,<0.11"
 typos = ">=1.29.10,<2"
@@ -75,7 +78,7 @@ typos = "typos --write-changes --force-exclude"
 # Feature to build recipes
 #
 [feature.recipes.dependencies]
-rattler-build = ">=0.43,<0.44"
+rattler-build = ">=0.44,<0.45"
 
 [feature.recipes.tasks.build-backends]
 cmd = "rattler-build build --recipe-dir empty --output-dir ."

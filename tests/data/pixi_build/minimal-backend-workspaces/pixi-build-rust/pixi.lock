@@ -23,7 +23,7 @@ packages:
   constrains:
   - __glibc >=2.17
   input:
-    hash: 95effb9e924ad976270a6c145cf58a65e04e7ed6f36afd708fa961b5b22ef9d1
+    hash: 92725c16c2872a03d5df54143b3cf0670215c169c41eebc4eca9987c1d7618ab
     globs: []
 - conda: .
   name: simple-app
@@ -33,7 +33,7 @@ packages:
   constrains:
   - __osx >=11.0
   input:
-    hash: 95effb9e924ad976270a6c145cf58a65e04e7ed6f36afd708fa961b5b22ef9d1
+    hash: 92725c16c2872a03d5df54143b3cf0670215c169c41eebc4eca9987c1d7618ab
     globs: []
 - conda: .
   name: simple-app
@@ -41,5 +41,5 @@ packages:
   build: hbf21a9e_0
   subdir: win-64
   input:
-    hash: 95effb9e924ad976270a6c145cf58a65e04e7ed6f36afd708fa961b5b22ef9d1
+    hash: 92725c16c2872a03d5df54143b3cf0670215c169c41eebc4eca9987c1d7618ab
     globs: []

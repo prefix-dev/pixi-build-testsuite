@@ -22,9 +22,6 @@ def test_pixi_install_examples(pixi_project: Path, pixi: Path, tmp_pixi_workspac
     This test iterates through all folders in the examples directory and verifies
     that `pixi install` completes successfully for each project.
     """
-    env = {
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
-    }
     # Remove existing .pixi folders
     shutil.rmtree(pixi_project.joinpath(".pixi"), ignore_errors=True)
 
@@ -35,4 +32,4 @@ def test_pixi_install_examples(pixi_project: Path, pixi: Path, tmp_pixi_workspac
     manifest = get_manifest(tmp_pixi_workspace)
 
     # Install the environment
-    verify_cli_command([pixi, "install", "--locked", "--manifest-path", manifest], env=env)
+    verify_cli_command([pixi, "install", "-v", "--locked", "--manifest-path", manifest])

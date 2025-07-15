@@ -47,18 +47,18 @@ def simple_workspace(tmp_pixi_workspace: Path, request: pytest.FixtureRequest) -
             ],
             "preview": ["pixi-build"],
             "platforms": [CURRENT_PLATFORM],
-            "name": name,
-            "version": "1.0.0",
         },
         "dependencies": {name: {"path": package_rel_dir}},
     }
 
     package_manifest = {
         "package": {
+            "name": name,
+            "version": "1.0.0",
             "build": {
                 "backend": {"name": "pixi-build-rattler-build", "version": "0.1.*"},
                 "configuration": {"debug-dir": str(debug_dir)},
-            }
+            },
         },
     }
 
@@ -79,7 +79,7 @@ def simple_workspace(tmp_pixi_workspace: Path, request: pytest.FixtureRequest) -
 
 @pytest.fixture(scope="session", autouse=True)
 def load_dotenv() -> None:
-    dotenv.load_dotenv()
+    dotenv.load_dotenv(override=True)
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

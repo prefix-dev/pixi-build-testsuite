@@ -167,14 +167,14 @@ packages:
 - conda: .
   name: editable-pyproject
   version: 0.1.0
-  build: pyhbf21a9e_0
+  build: pyh4616a5c_0
   subdir: noarch
   depends:
   - python
+  - python
   input:
-    hash: e2aeabaf6b81a2830a9736cab58074fa349bf18244acf4ef82050e4459199f36
-    globs:
-    - pyproject.toml
+    hash: 889d55dab4991178cc600d248aa949d46b3320610c96558e1c77cd3787e3eed1
+    globs: []
 - conda: https://prefix.dev/conda-forge/linux-64/ld_impl_linux-64-2.43-h712a8e2_2.conda
   sha256: 7c91cea91b13f4314d125d1bedb9d03a29ebbd5080ccdea70260363424646dbe
   md5: 048b02e3962f066da18efe3a21b77672

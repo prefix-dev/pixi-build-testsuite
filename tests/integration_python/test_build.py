@@ -16,6 +16,7 @@ def test_build_conda_package(
         [
             pixi,
             "build",
+            "-v",
             "--manifest-path",
             simple_workspace.package_dir,
             "--output-dir",
@@ -53,6 +54,7 @@ def test_build_conda_package_variants(
         [
             pixi,
             "build",
+            "-v",
             "--manifest-path",
             simple_workspace.package_dir,
             "--output-dir",
@@ -74,22 +76,18 @@ def test_build_conda_package_variants(
 
 def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspace) -> None:
     simple_workspace.write_files()
-    # Setting PIXI_CACHE_DIR shouldn't be necessary
-    env = {
-        "PIXI_CACHE_DIR": str(simple_workspace.workspace_dir.joinpath("pixi_cache")),
-    }
     verify_cli_command(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
-        ],
-        env=env,
+        ]
     )
 
-    conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_metadata_params.json")
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_params.json")
+    conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
 
     assert conda_metadata_params.is_file()
     assert conda_build_params.is_file()
@@ -102,10 +100,10 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
-        ],
-        env=env,
+        ]
     )
 
     # Everything should be cached, so no getMetadata or build call
@@ -119,12 +117,13 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_params.json")
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
 
     assert conda_build_params.is_file()
 
@@ -138,6 +137,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
@@ -155,12 +155,13 @@ def test_project_model_change_trigger_rebuild(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_params.json")
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
 
     assert conda_build_params.is_file()
 
@@ -176,6 +177,7 @@ def test_project_model_change_trigger_rebuild(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
@@ -202,6 +204,7 @@ def test_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace: Pa
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -212,6 +215,7 @@ def test_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace: Pa
         [
             pixi,
             "run",
+            "-v",
             "--manifest-path",
             manifest_path,
             "check-editable",
@@ -233,16 +237,15 @@ def test_non_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace
     shutil.copytree(test_data, target_dir)
     manifest_path = target_dir.joinpath("pyproject.toml")
 
-    # TODO: Setting the cache dir shouldn't be necessary!
     env = {
         "BUILD_EDITABLE_PYTHON": "false",
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
     }
 
     verify_cli_command(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -254,6 +257,7 @@ def test_non_editable_pyproject(pixi: Path, build_data: Path, tmp_pixi_workspace
         [
             pixi,
             "run",
+            "-v",
             "--manifest-path",
             manifest_path,
             "check-editable",
@@ -277,7 +281,7 @@ def test_build_using_rattler_build_backend(
 
     # Running pixi build should build the recipe.yaml
     verify_cli_command(
-        [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )
 
     # really make sure that conda package was built
@@ -297,6 +301,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -317,6 +322,7 @@ def test_error_manifest_deps_no_default(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
@@ -339,19 +345,14 @@ def test_recursive_source_run_dependencies(
     shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
     manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
 
-    # TODO: Setting the cache dir shouldn't be necessary!
-    env = {
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
-    }
-
     verify_cli_command(
         [
             pixi,
             "install",
+            "-v",
             "--manifest-path",
             manifest_path,
         ],
-        env=env,
     )
 
     # Package B is a dependency of Package A
@@ -360,12 +361,32 @@ def test_recursive_source_run_dependencies(
         [
             pixi,
             "run",
+            "-v",
             "--manifest-path",
             manifest_path,
             "package-b",
         ],
-        env=env,
         stdout_contains="hello from package-b",
+    )
+
+
+@pytest.mark.slow
+def test_maturin(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+    project = "maturin"
+    test_data = build_data.joinpath(project)
+
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
+    manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
+
+    verify_cli_command(
+        [
+            pixi,
+            "run",
+            "--manifest-path",
+            manifest_path,
+            "start",
+        ],
+        stdout_contains="3 + 5 = 8",
     )
 
 
@@ -383,11 +404,6 @@ def test_recursive_source_build_dependencies(
     shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
     manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
 
-    # TODO: Setting the cache dir shouldn't be necessary!
-    env = {
-        "PIXI_CACHE_DIR": str(tmp_pixi_workspace.joinpath("pixi_cache")),
-    }
-
     verify_cli_command(
         [
             pixi,
@@ -395,5 +411,4 @@ def test_recursive_source_build_dependencies(
             "--manifest-path",
             manifest_path,
         ],
-        env=env,
     )
