@@ -412,3 +412,17 @@ def test_recursive_source_build_dependencies(
             manifest_path,
         ],
     )
+
+    # Package B is a dependency of Package A
+    # Check that Package A works properly and that the output is valid
+    verify_cli_command(
+        [
+            pixi,
+            "run",
+            "--frozen",
+            "--manifest-path",
+            manifest_path,
+            "start",
+        ],
+        stdout_contains=["Package A application starting", "5 + 3 = 8"],
+    )
