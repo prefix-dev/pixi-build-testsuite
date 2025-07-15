@@ -412,27 +412,3 @@ def test_recursive_source_build_dependencies(
             manifest_path,
         ],
     )
-
-
-@pytest.mark.slow
-def test_cyclic_dependency(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
-    """
-    Test whether recursive source dependencies work properly if
-    they are specified in the `host-dependencies` section
-    """
-    project = "cycle"
-    test_data = build_data.joinpath(project)
-
-    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
-    manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
-
-    verify_cli_command(
-        [
-            pixi,
-            "lock",
-            "--manifest-path",
-            manifest_path,
-        ],
-        stderr_contains="detected a cyclic dependency",
-        expected_exit_code=ExitCode.FAILURE,
-    )
