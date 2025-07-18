@@ -26,7 +26,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_26.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_26.conda
       - conda: .
-        subdir: win-64
+        build: h9352c13_0
 packages:
 - conda: https://prefix.dev/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -100,13 +100,25 @@ packages:
 - conda: .
   name: simple-app
   version: 0.1.0
+  build: h9352c13_0
+  subdir: win-64
+  depends:
+  - ucrt >=10.0.20348.0
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  input:
+    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
+    globs: []
+- conda: .
+  name: simple-app
+  version: 0.1.0
   build: hbf21a9e_0
   subdir: linux-64
   depends:
-  - libstdcxx >=15
   - libgcc >=15
+  - libstdcxx >=15
   input:
-    hash: 0fa36cda356df1515279c9c9cb46afb4b7d17422f7ee392f7dcb457eace8bdca
+    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
     globs: []
 - conda: .
   name: simple-app
@@ -116,7 +128,7 @@ packages:
   depends:
   - libcxx >=20
   input:
-    hash: 0fa36cda356df1515279c9c9cb46afb4b7d17422f7ee392f7dcb457eace8bdca
+    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
     globs: []
 - conda: .
   name: simple-app
@@ -126,18 +138,7 @@ packages:
   depends:
   - libcxx >=20
   input:
-    hash: 0fa36cda356df1515279c9c9cb46afb4b7d17422f7ee392f7dcb457eace8bdca
-    globs: []
-- conda: .
-  name: simple-app
-  version: 0.1.0
-  build: hbf21a9e_0
-  subdir: win-64
-  depends:
-  - vc >=14.1,<15
-  - vc14_runtime >=14.16.27033
-  input:
-    hash: 0fa36cda356df1515279c9c9cb46afb4b7d17422f7ee392f7dcb457eace8bdca
+    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
     globs: []
 - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
   sha256: db8dead3dd30fb1a032737554ce91e2819b43496a0db09927edf01c32b577450

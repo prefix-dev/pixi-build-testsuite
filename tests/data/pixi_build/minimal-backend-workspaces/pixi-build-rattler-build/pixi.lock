@@ -24,7 +24,7 @@ packages:
   build: h0dc7051_0
   subdir: osx-64
   input:
-    hash: 2b5d19eb4ab709eb5cca899d6852aa3c90100ce66e7f119f366b5d2fb12311de
+    hash: 6615a9dbdc9d275f3476300cbf329b338792719d21f9a1696a7dd223abbdc7f0
     globs:
     - recipe.yaml
 - conda: .
@@ -33,7 +33,7 @@ packages:
   build: h60d57d3_0
   subdir: osx-arm64
   input:
-    hash: 2b5d19eb4ab709eb5cca899d6852aa3c90100ce66e7f119f366b5d2fb12311de
+    hash: 6615a9dbdc9d275f3476300cbf329b338792719d21f9a1696a7dd223abbdc7f0
     globs:
     - recipe.yaml
 - conda: .
@@ -42,7 +42,7 @@ packages:
   build: h9490d1a_0
   subdir: win-64
   input:
-    hash: 2b5d19eb4ab709eb5cca899d6852aa3c90100ce66e7f119f366b5d2fb12311de
+    hash: 6615a9dbdc9d275f3476300cbf329b338792719d21f9a1696a7dd223abbdc7f0
     globs:
     - recipe.yaml
 - conda: .
@@ -51,6 +51,6 @@ packages:
   build: hb0f4dca_0
   subdir: linux-64
   input:
-    hash: 2b5d19eb4ab709eb5cca899d6852aa3c90100ce66e7f119f366b5d2fb12311de
+    hash: 6615a9dbdc9d275f3476300cbf329b338792719d21f9a1696a7dd223abbdc7f0
     globs:
     - recipe.yaml
