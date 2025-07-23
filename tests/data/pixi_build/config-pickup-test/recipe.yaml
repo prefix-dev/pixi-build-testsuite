@@ -1,6 +1,24 @@
 package:
   name: simple-config-test
-  version: "0.1.0"
+  version: 0.1.0
+
+source:
+  path: .
 
 build:
-  noarch: generic
+  number: 0
+  script:
+    - if: win
+      then:
+        - mkdir -p %PREFIX%\bin
+        - echo @echo off > %PREFIX%\bin\simple-config-test.bat
+        - echo echo Build backend works >> %PREFIX%\bin\simple-config-test.bat
+      else:
+        - mkdir -p $PREFIX/bin
+        - echo "#!/usr/bin/env bash" > $PREFIX/bin/simple-config-test
+        - echo "echo Build backend works" >> $PREFIX/bin/simple-config-test
+        - chmod +x $PREFIX/bin/simple-config-test
+
+requirements:
+  host:
+    - fd-find

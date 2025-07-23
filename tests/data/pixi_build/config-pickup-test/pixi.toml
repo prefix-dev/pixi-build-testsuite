@@ -1,5 +1,5 @@
 [workspace]
-channels = ["https://prefix.dev/conda-forge"]
+channels = []
 platforms = ["win-64", "linux-64", "osx-arm64", "osx-64"]
 preview = ["pixi-build"]
 
@@ -15,7 +15,4 @@ version = "0.1.0"
 
 [package.build]
 backend = { name = "pixi-build-rattler-build", version = "*" }
-channels = [
-  "https://prefix.dev/pixi-build-backends",
-  "https://prefix.dev/conda-forge",
-]
+channels = ["https://broken.url/conda-forge"]
