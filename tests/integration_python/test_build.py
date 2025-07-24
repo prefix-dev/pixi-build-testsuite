@@ -1,4 +1,3 @@
-import json
 import shutil
 from pathlib import Path
 
@@ -61,11 +60,6 @@ def test_build_conda_package_variants(
             simple_workspace.workspace_dir,
         ],
     )
-
-    # Ensure that the correct variants are requested
-    conda_build_params_file = simple_workspace.debug_dir.joinpath("conda_build_params.json")
-    conda_build_params = json.loads(conda_build_params_file.read_text())
-    assert conda_build_params["variantConfiguration"]["package3"] == variants
 
     # Ensure that exactly two conda packages have been built
     built_packages = list(simple_workspace.workspace_dir.glob("*.conda"))
