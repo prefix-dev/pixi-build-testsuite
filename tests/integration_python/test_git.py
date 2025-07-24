@@ -242,7 +242,7 @@ def test_build_git_source_deps_from_tag(
 
     verify_cli_command(["git", "add", "."], cwd=target_git_dir)
     verify_cli_command(["git", "commit", "-m", "initial commit"], cwd=target_git_dir)
-    verify_cli_command(["git", "tag", "v1.0.0"], cwd=target_git_dir)
+    verify_cli_command(["git", "tag", "v1.0.0", "-m 'my version 1.0.0"], cwd=target_git_dir)
 
     # extract exact commit hash that we will use
     commit_hash = verify_cli_command(
