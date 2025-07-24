@@ -14,7 +14,7 @@
 namespace package_b {
 
 // Simple function to add two integers
-API_EXPORT int add(int a, int c);
+API_EXPORT int add(int a, int b);
 
 } // namespace package_b
 

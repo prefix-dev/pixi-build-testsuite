@@ -15,15 +15,15 @@ environments:
       - conda: package_b
         subdir: linux-64
       osx-arm64:
-      - conda: https://prefix.dev/conda-forge/osx-arm64/libcxx-20.1.8-ha82da77_0.conda
+      - conda: https://prefix.dev/conda-forge/osx-arm64/libcxx-20.1.8-hf598326_1.conda
       - conda: package_a
         subdir: osx-arm64
       - conda: package_b
         subdir: osx-arm64
       win-64:
       - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
-      - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_26.conda
-      - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_26.conda
+      - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_27.conda
+      - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_27.conda
       - conda: package_a
         subdir: win-64
       - conda: package_b
@@ -48,15 +48,15 @@ packages:
   license_family: BSD
   size: 23621
   timestamp: 1650670423406
-- conda: https://prefix.dev/conda-forge/osx-arm64/libcxx-20.1.8-ha82da77_0.conda
-  sha256: 3d7fd77e37794c28e99812da03de645b8e1ddefa876d9400c4d552b9eb8dd880
-  md5: 149bb93ede144e7c86bf5f88378ae5f6
+- conda: https://prefix.dev/conda-forge/osx-arm64/libcxx-20.1.8-hf598326_1.conda
+  sha256: 119b3ac75cb1ea29981e5053c2cb10d5f0b06fcc81b486cb7281f160daf673a1
+  md5: a69ef3239d3268ef8602c7a7823fd982
   depends:
   - __osx >=11.0
   license: Apache-2.0 WITH LLVM-exception
   license_family: Apache
-  size: 567309
-  timestamp: 1752050056857
+  size: 568267
+  timestamp: 1752814881595
 - conda: https://prefix.dev/conda-forge/linux-64/libgcc-15.1.0-h767d61c_3.conda
   sha256: 59a87161212abe8acc57d318b0cc8636eb834cdfdfddcf1f588b5493644b39a3
   md5: 9e60c55e725c20d23125a5f0dd69af5d
@@ -99,7 +99,7 @@ packages:
   - libstdcxx >=15
   - libgcc >=15
   input:
-    hash: b5e3141fcc1d9f4565baa59c8d7d0ba8ad271e78dd27dd818727af6af4cab5e4
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
     globs: []
   sources:
     package_b:
@@ -113,7 +113,7 @@ packages:
   - package_b
   - libcxx >=20
   input:
-    hash: b5e3141fcc1d9f4565baa59c8d7d0ba8ad271e78dd27dd818727af6af4cab5e4
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
     globs: []
   sources:
     package_b:
@@ -128,7 +128,7 @@ packages:
   - vc >=14.1,<15
   - vc14_runtime >=14.16.27033
   input:
-    hash: b5e3141fcc1d9f4565baa59c8d7d0ba8ad271e78dd27dd818727af6af4cab5e4
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
     globs: []
   sources:
     package_b:
@@ -142,7 +142,7 @@ packages:
   - libstdcxx >=15
   - libgcc >=15
   input:
-    hash: b606dba774b5a7cf30ba5dbd2ac8055e886d98bc6e3936e6214d1c90d2524e28
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
 - conda: package_b
   name: package_b
@@ -152,7 +152,7 @@ packages:
   depends:
   - libcxx >=20
   input:
-    hash: b606dba774b5a7cf30ba5dbd2ac8055e886d98bc6e3936e6214d1c90d2524e28
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
 - conda: package_b
   name: package_b
@@ -163,7 +163,7 @@ packages:
   - vc >=14.1,<15
   - vc14_runtime >=14.16.27033
   input:
-    hash: b606dba774b5a7cf30ba5dbd2ac8055e886d98bc6e3936e6214d1c90d2524e28
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
 - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
   sha256: db8dead3dd30fb1a032737554ce91e2819b43496a0db09927edf01c32b577450
@@ -173,25 +173,25 @@ packages:
   license: LicenseRef-MicrosoftWindowsSDK10
   size: 559710
   timestamp: 1728377334097
-- conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_26.conda
-  sha256: b388d88e04aa0257df4c1d28f8d85d985ad07c1e5645aa62335673c98704c4c6
-  md5: 18b6bf6f878501547786f7bf8052a34d
+- conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_27.conda
+  sha256: 869f36dbf3c78d38b5b883040801d399280b23920ff07168510719ed44c31b48
+  md5: ce337b923b7b1b19afb12111f7d31064
   depends:
   - vc14_runtime >=14.44.35208
   track_features:
   - vc14
   license: BSD-3-Clause
   license_family: BSD
-  size: 17914
-  timestamp: 1750371462857
-- conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_26.conda
-  sha256: 7bad6e25a7c836d99011aee59dcf600b7f849a6fa5caa05a406255527e80a703
-  md5: 14d65350d3f5c8ff163dc4f76d6e2830
+  size: 18212
+  timestamp: 1752814700701
+- conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_27.conda
+  sha256: 6b3afa7a7a74be39a1206c859eaf2e03ea5539eafa65547dbe79f198693a4f3f
+  md5: edb5e5d54d60255914189991327ad381
   depends:
   - ucrt >=10.0.20348.0
   constrains:
-  - vs2015_runtime 14.44.35208.* *_26
+  - vs2015_runtime 14.44.35208.* *_27
   license: LicenseRef-MicrosoftVisualCpp2015-2022Runtime
   license_family: Proprietary
-  size: 756109
-  timestamp: 1750371459116
+  size: 757579
+  timestamp: 1752814697230
