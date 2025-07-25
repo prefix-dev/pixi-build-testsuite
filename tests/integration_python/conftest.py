@@ -175,7 +175,7 @@ def tmp_pixi_workspace(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
     pixi_config = """
 # Reset to defaults
-default-channels = ["conda-forge"]
+default-channels = ["https://prefix.dev/conda-forge"]
 shell.change-ps1 = true
 tls-no-verify = false
 detached-environments = false
