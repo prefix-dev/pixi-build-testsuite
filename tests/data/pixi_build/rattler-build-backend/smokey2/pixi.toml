@@ -1,5 +1,5 @@
 [project]
-channels = ["conda-forge"]
+channels = ["https://prefix.dev/conda-forge"]
 description = "Add a short description here"
 platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
 preview = ["pixi-build"]

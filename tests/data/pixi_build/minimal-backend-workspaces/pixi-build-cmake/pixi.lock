@@ -26,7 +26,7 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h2b53caa_30.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_30.conda
       - conda: .
-        subdir: win-64
+        build: h9352c13_0
 packages:
 - conda: https://prefix.dev/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -100,6 +100,18 @@ packages:
 - conda: .
   name: simple-app
   version: 0.1.0
+  build: h9352c13_0
+  subdir: win-64
+  depends:
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
+  input:
+    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
+    globs: []
+- conda: .
+  name: simple-app
+  version: 0.1.0
   build: hbf21a9e_0
   subdir: linux-64
   depends:
@@ -125,17 +137,6 @@ packages:
   subdir: osx-arm64
   depends:
   - libcxx >=20
-  input:
-    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
-    globs: []
-- conda: .
-  name: simple-app
-  version: 0.1.0
-  build: hbf21a9e_0
-  subdir: win-64
-  depends:
-  - vc >=14.1,<15
-  - vc14_runtime >=14.16.27033
   input:
     hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
     globs: []

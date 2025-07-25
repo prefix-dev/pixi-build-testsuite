@@ -22,12 +22,12 @@ environments:
         subdir: osx-arm64
       win-64:
       - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
-      - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_27.conda
-      - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_27.conda
+      - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h2b53caa_30.conda
+      - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_30.conda
       - conda: package_a
-        subdir: win-64
+        build: h9352c13_0
       - conda: package_b
-        subdir: win-64
+        build: h9352c13_0
 packages:
 - conda: https://prefix.dev/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -92,6 +92,22 @@ packages:
 - conda: package_a
   name: package_a
   version: 0.1.0
+  build: h9352c13_0
+  subdir: win-64
+  depends:
+  - package_b
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
+  input:
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
+    globs: []
+  sources:
+    package_b:
+      path: ../package_b
+- conda: package_a
+  name: package_a
+  version: 0.1.0
   build: hbf21a9e_0
   subdir: linux-64
   depends:
@@ -118,21 +134,18 @@ packages:
   sources:
     package_b:
       path: ../package_b
-- conda: package_a
-  name: package_a
+- conda: package_b
+  name: package_b
   version: 0.1.0
-  build: hbf21a9e_0
+  build: h9352c13_0
   subdir: win-64
   depends:
-  - package_b
-  - vc >=14.1,<15
-  - vc14_runtime >=14.16.27033
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
   input:
-    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
-  sources:
-    package_b:
-      path: ../package_b
 - conda: package_b
   name: package_b
   version: 0.1.0
@@ -151,17 +164,6 @@ packages:
   subdir: osx-arm64
   depends:
   - libcxx >=20
-  input:
-    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
-    globs: []
-- conda: package_b
-  name: package_b
-  version: 0.1.0
-  build: hbf21a9e_0
-  subdir: win-64
-  depends:
-  - vc >=14.1,<15
-  - vc14_runtime >=14.16.27033
   input:
     hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
@@ -173,25 +175,25 @@ packages:
   license: LicenseRef-MicrosoftWindowsSDK10
   size: 559710
   timestamp: 1728377334097
-- conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h41ae7f8_27.conda
-  sha256: 869f36dbf3c78d38b5b883040801d399280b23920ff07168510719ed44c31b48
-  md5: ce337b923b7b1b19afb12111f7d31064
+- conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h2b53caa_30.conda
+  sha256: 8e16a8c3270d88735234a8097d45efea02b49751800c83b6fd5f2167a3828f52
+  md5: 76b6febe6dea7991df4c86f826f396c5
   depends:
-  - vc14_runtime >=14.44.35208
+  - vc14_runtime >=14.42.34433
   track_features:
   - vc14
   license: BSD-3-Clause
   license_family: BSD
-  size: 18212
-  timestamp: 1752814700701
-- conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_27.conda
-  sha256: 6b3afa7a7a74be39a1206c859eaf2e03ea5539eafa65547dbe79f198693a4f3f
-  md5: edb5e5d54d60255914189991327ad381
+  size: 17962
+  timestamp: 1753139853244
+- conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_30.conda
+  sha256: 2958ef637509d69ea496b091dc579f1bf38687575b65744e73d157cfe56c9eca
+  md5: fa6802b52e903c42f882ecd67731e10a
   depends:
   - ucrt >=10.0.20348.0
   constrains:
-  - vs2015_runtime 14.44.35208.* *_27
+  - vs2015_runtime 14.44.35208.* *_30
   license: LicenseRef-MicrosoftVisualCpp2015-2022Runtime
   license_family: Proprietary
-  size: 757579
-  timestamp: 1752814697230
+  size: 754911
+  timestamp: 1753139843755
