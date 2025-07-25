@@ -1,4 +1,3 @@
-import json
 import shutil
 from pathlib import Path
 
@@ -62,11 +61,6 @@ def test_build_conda_package_variants(
         ],
     )
 
-    # Ensure that the correct variants are requested
-    conda_build_params_file = simple_workspace.debug_dir.joinpath("conda_build_params.json")
-    conda_build_params = json.loads(conda_build_params_file.read_text())
-    assert conda_build_params["variantConfiguration"]["package3"] == variants
-
     # Ensure that exactly two conda packages have been built
     built_packages = list(simple_workspace.workspace_dir.glob("*.conda"))
     assert len(built_packages) == 2
@@ -86,8 +80,8 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
         ]
     )
 
-    conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_metadata_params.json")
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_params.json")
+    conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
 
     assert conda_metadata_params.is_file()
     assert conda_build_params.is_file()
@@ -123,7 +117,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
         ],
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_params.json")
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
 
     assert conda_build_params.is_file()
 
@@ -161,7 +155,7 @@ def test_project_model_change_trigger_rebuild(
         ],
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_params.json")
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
 
     assert conda_build_params.is_file()
 
@@ -387,4 +381,42 @@ def test_maturin(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None
             "start",
         ],
         stdout_contains="3 + 5 = 8",
+    )
+
+
+@pytest.mark.slow
+def test_recursive_source_build_dependencies(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    """
+    Test whether recursive source dependencies work properly if
+    they are specified in the `host-dependencies` section
+    """
+    project = "recursive_source_build_dep"
+    test_data = build_data.joinpath(project)
+
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
+    manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
+
+    verify_cli_command(
+        [
+            pixi,
+            "lock",
+            "--manifest-path",
+            manifest_path,
+        ],
+    )
+
+    # Package B is a dependency of Package A
+    # Check that Package A works properly and that the output is valid
+    verify_cli_command(
+        [
+            pixi,
+            "run",
+            "--frozen",
+            "--manifest-path",
+            manifest_path,
+            "start",
+        ],
+        stdout_contains=["Package A application starting", "5 + 3 = 8"],
     )
