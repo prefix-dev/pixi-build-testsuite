@@ -51,10 +51,9 @@ update-test-channel = { cmd = "python update-channels.py {{ channel }}", args = 
 
 [feature.lint.dependencies]
 actionlint = ">=1.7.7,<2"
+dprint = ">=0.50.0,<0.51"
 go-shfmt = ">=3.11.0,<4"
-pre-commit = ">=4.1.0,<5"
-pre-commit-hooks = ">=5.0.0,<6"
-prettier = ">=3.5.2,<4"
+lefthook = ">=1.12.2,<2"
 ruff = ">=0.12.2,<0.13"
 shellcheck = ">=0.10.0,<0.11"
 taplo = ">=0.10,<0.11"
@@ -62,10 +61,11 @@ typos = ">=1.29.10,<2"
 
 [feature.lint.tasks]
 actionlint = { cmd = "actionlint", env = { SHELLCHECK_OPTS = "-e SC2086" } }
-lint = { cmd = "pre-commit run --all-files --hook-stage=manual", description = "Run all linters and formatters on all code" }
-pre-commit-install = "pre-commit install --install-hooks -t=pre-commit -t=pre-push"
-pre-commit-run = "pre-commit run --all-files"
-prettier-fmt = { cmd = "prettier --write" }
+dprint-check = { cmd = "dprint check --log-level=silent", description = "Check formatting with dprint" }
+dprint-fmt = { cmd = "dprint fmt --incremental=false", description = "Format with dprint" }
+lefthook = { cmd = "lefthook", description = "Run lefthook" }
+lint = { cmd = "lefthook run pre-commit --all-files --force", description = "Run all linters and formatters on all code" }
+pre-commit-install = "lefthook install"
 ruff-format = "ruff format --force-exclude"
 ruff-lint = "ruff check --fix --exit-non-zero-on-fix --force-exclude"
 shell-format = "shfmt --write --indent=4 --simplify --binary-next-line"
