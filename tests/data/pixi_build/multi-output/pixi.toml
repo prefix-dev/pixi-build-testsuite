@@ -1,6 +1,6 @@
 [workspace]
 authors = ["Wolf Vollprecht <w.vollprecht@gmail.com>"]
-channels = ["conda-forge"]
+channels = ["https://prefix.dev/conda-forge"]
 description = "Add a short description here"
 name = "multi-output"
 platforms = ["osx-arm64", "linux-64", "win-64"]

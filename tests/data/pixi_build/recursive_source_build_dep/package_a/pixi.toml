@@ -1,0 +1,18 @@
+[package]
+name = "package_a"
+version = "0.1.0"
+
+[package.build]
+backend = { name = "pixi-build-cmake", version = "*" }
+channels = [
+  "https://prefix.dev/pixi-build-backends",
+  "https://prefix.dev/conda-forge",
+]
+
+[package.host-dependencies]
+package_b = { path = "../package_b" }
+
+
+# For that use case we should actually use run-exports
+[package.run-dependencies]
+package_b = { path = "../package_b" }

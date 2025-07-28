@@ -2,7 +2,6 @@ version: 6
 environments:
   default:
     channels:
-    - url: https://prefix.dev/pixi-build-backends/
     - url: https://prefix.dev/conda-forge/
     packages:
       linux-64:
@@ -11,21 +10,23 @@ environments:
       - conda: https://prefix.dev/conda-forge/linux-64/libgcc-15.1.0-h767d61c_3.conda
       - conda: https://prefix.dev/conda-forge/linux-64/libgomp-15.1.0-h767d61c_3.conda
       - conda: https://prefix.dev/conda-forge/linux-64/libstdcxx-15.1.0-h8f9b012_3.conda
-      - conda: .
+      - conda: package_a
         subdir: linux-64
-      osx-64:
-      - conda: https://prefix.dev/conda-forge/osx-64/libcxx-20.1.8-h3d58e20_1.conda
-      - conda: .
-        subdir: osx-64
+      - conda: package_b
+        subdir: linux-64
       osx-arm64:
       - conda: https://prefix.dev/conda-forge/osx-arm64/libcxx-20.1.8-hf598326_1.conda
-      - conda: .
+      - conda: package_a
+        subdir: osx-arm64
+      - conda: package_b
         subdir: osx-arm64
       win-64:
       - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc-14.3-h2b53caa_30.conda
       - conda: https://prefix.dev/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_30.conda
-      - conda: .
+      - conda: package_a
+        build: h9352c13_0
+      - conda: package_b
         build: h9352c13_0
 packages:
 - conda: https://prefix.dev/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
@@ -47,15 +48,6 @@ packages:
   license_family: BSD
   size: 23621
   timestamp: 1650670423406
-- conda: https://prefix.dev/conda-forge/osx-64/libcxx-20.1.8-h3d58e20_1.conda
-  sha256: 9643d6c5a94499cddb5ae1bccc4f78aef8cfd77bcf6b37ad325bc7232a8a870f
-  md5: d2db320b940047515f7a27f870984fe7
-  depends:
-  - __osx >=10.13
-  license: Apache-2.0 WITH LLVM-exception
-  license_family: Apache
-  size: 564830
-  timestamp: 1752814841086
 - conda: https://prefix.dev/conda-forge/osx-arm64/libcxx-20.1.8-hf598326_1.conda
   sha256: 119b3ac75cb1ea29981e5053c2cb10d5f0b06fcc81b486cb7281f160daf673a1
   md5: a69ef3239d3268ef8602c7a7823fd982
@@ -97,8 +89,53 @@ packages:
   license_family: GPL
   size: 3896407
   timestamp: 1750808251302
-- conda: .
-  name: simple-app
+- conda: package_a
+  name: package_a
+  version: 0.1.0
+  build: h9352c13_0
+  subdir: win-64
+  depends:
+  - package_b
+  - vc >=14.2,<15
+  - vc14_runtime >=14.29.30139
+  - ucrt >=10.0.20348.0
+  input:
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
+    globs: []
+  sources:
+    package_b:
+      path: ../package_b
+- conda: package_a
+  name: package_a
+  version: 0.1.0
+  build: hbf21a9e_0
+  subdir: linux-64
+  depends:
+  - package_b
+  - libstdcxx >=15
+  - libgcc >=15
+  input:
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
+    globs: []
+  sources:
+    package_b:
+      path: ../package_b
+- conda: package_a
+  name: package_a
+  version: 0.1.0
+  build: hbf21a9e_0
+  subdir: osx-arm64
+  depends:
+  - package_b
+  - libcxx >=20
+  input:
+    hash: 2ca868cb66fc757567f19c5b2d695164c319867b55ae725502b924d90204c6c3
+    globs: []
+  sources:
+    package_b:
+      path: ../package_b
+- conda: package_b
+  name: package_b
   version: 0.1.0
   build: h9352c13_0
   subdir: win-64
@@ -107,10 +144,10 @@ packages:
   - vc14_runtime >=14.29.30139
   - ucrt >=10.0.20348.0
   input:
-    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
-- conda: .
-  name: simple-app
+- conda: package_b
+  name: package_b
   version: 0.1.0
   build: hbf21a9e_0
   subdir: linux-64
@@ -118,27 +155,17 @@ packages:
   - libstdcxx >=15
   - libgcc >=15
   input:
-    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
-- conda: .
-  name: simple-app
-  version: 0.1.0
-  build: hbf21a9e_0
-  subdir: osx-64
-  depends:
-  - libcxx >=20
-  input:
-    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
-    globs: []
-- conda: .
-  name: simple-app
+- conda: package_b
+  name: package_b
   version: 0.1.0
   build: hbf21a9e_0
   subdir: osx-arm64
   depends:
   - libcxx >=20
   input:
-    hash: bd2360cb8334c66dfce6e40e954ff9e39fbd48a0537169238f4e57869238e026
+    hash: 590a21345d066439a27bc8bd9d9290e9665e0766504270c05814ff59a9b69212
     globs: []
 - conda: https://prefix.dev/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_1.conda
   sha256: db8dead3dd30fb1a032737554ce91e2819b43496a0db09927edf01c32b577450

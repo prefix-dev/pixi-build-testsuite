@@ -1,4 +1,5 @@
 import argparse
+import itertools
 import os
 import platform
 import sys
@@ -10,6 +11,7 @@ import httpx
 from dotenv import load_dotenv
 from github import Github
 from github.Artifact import Artifact
+from github.PaginatedList import PaginatedList
 from rich.console import Console
 from rich.progress import track
 
@@ -159,6 +161,15 @@ def download_and_extract_artifact(
     os.unlink(temp_zip_path)
 
 
+def get_matching_artifact(
+    artifacts: PaginatedList[Artifact], artifact_name_pattern: str
+) -> Artifact | None:
+    for artifact in artifacts:
+        if artifact_name_pattern in artifact.name:
+            return artifact
+    return None
+
+
 def download_github_artifact(
     github_token: str | None,
     output_dir: Path,
@@ -183,11 +194,22 @@ def download_github_artifact(
     repository = gh.get_repo(repo)
     console.print(f"[green]Connected to repository: {repository.full_name}")
 
-    # Get the workflow run
+    # Find the artifact for our platform
+    if repo == "prefix-dev/pixi":
+        artifact_name_pattern = f"pixi-{current_platform}"
+    elif repo == "prefix-dev/pixi-build-backends":
+        artifact_name_pattern = f"pixi-build-backends-{current_platform}"
+    else:
+        raise ValueError(f"Unsupported repository: {repo}")
+
+    # Get the target_artifact
+    target_artifact = None
     if run_id:
         # Use specific run ID - no need to find workflow first
         console.print(f"[blue]Using specified run ID: {run_id}")
         selected_run = repository.get_workflow_run(run_id)
+        artifacts = selected_run.get_artifacts()
+        target_artifact = get_matching_artifact(artifacts, artifact_name_pattern)
 
     else:
         # Get the latest workflow run for the specified workflow
@@ -207,27 +229,14 @@ def download_github_artifact(
         # Get latest workflow run from main branch
         console.print("[blue]Finding latest workflow run from main branch")
         runs = target_workflow.get_runs(branch="main", event="push")
-        selected_run = runs[0]
+        # Check the past five runs until a suitable candidate is found
+        for selected_run in itertools.islice(runs, 3):
+            artifacts = selected_run.get_artifacts()
+            target_artifact = get_matching_artifact(artifacts, artifact_name_pattern)
+            if target_artifact:
+                break
 
-    assert selected_run is not None
     console.print(f"[blue]Selected run: {selected_run.id} from {selected_run.created_at}")
-
-    # Get artifacts for this run
-    artifacts = selected_run.get_artifacts()
-
-    # Find the artifact for our platform
-    target_artifact = None
-    if repo == "prefix-dev/pixi":
-        artifact_name_pattern = f"pixi-{current_platform}"
-    elif repo == "prefix-dev/pixi-build-backends":
-        artifact_name_pattern = f"pixi-build-backends-{current_platform}"
-    else:
-        raise ValueError(f"Unsupported repository: {repo}")
-
-    for artifact in artifacts:
-        if artifact_name_pattern in artifact.name:
-            target_artifact = artifact
-            break
 
     if not target_artifact:
         console.print(f"[red]Could not find artifact matching pattern '{artifact_name_pattern}'")
