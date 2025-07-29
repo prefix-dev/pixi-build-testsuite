@@ -88,7 +88,7 @@ def test_pixi_build_cmake_invalid_config_rejection(
         expected_exit_code=ExitCode.FAILURE,
         stderr_contains=[
             "failed to parse configuration",
-            "unknown field `invalid_target_config_key`",
+            "unknown field `invalid_config_key`",
         ],
     )
 
