@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-
+import platform
 import pytest
 
 from .common import ExitCode, get_manifest, verify_cli_command
@@ -53,15 +53,29 @@ def test_pixi_build_cmake_env_config_with_target(
     # Get manifest
     manifest = get_manifest(tmp_pixi_workspace)
 
-    # Install the package - this should show env vars in the build output
-    verify_cli_command(
-        [pixi, "install", "-v", "--manifest-path", manifest],
-        stderr_contains=[
-            "GLOBAL_ENV_VAR=global_value",
-            "UNIX_SPECIFIC_VAR=unix_value",
-            "PLATFORM_TYPE=unix",
-        ],
-    )
+    # Platform-specific expectations
+    current_sys = platform.system().lower()
+
+    if current_sys == "windows":
+        # On Windows, expect win-64 specific variables
+        verify_cli_command(
+            [pixi, "install", "-v", "--manifest-path", manifest],
+            stderr_contains=[
+                "GLOBAL_ENV_VAR=global_value",
+                "WIN_SPECIFIC_VAR=windows_value",
+                "PLATFORM_TYPE=win-64",
+            ],
+        )
+    else:
+        # On Unix-like systems (Linux, macOS), expect unix specific variables
+        verify_cli_command(
+            [pixi, "install", "-v", "--manifest-path", manifest],
+            stderr_contains=[
+                "GLOBAL_ENV_VAR=global_value",
+                "UNIX_SPECIFIC_VAR=unix_value",
+                "PLATFORM_TYPE=unix",
+            ],
+        )
 
 
 @pytest.mark.slow
