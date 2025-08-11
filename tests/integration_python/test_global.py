@@ -40,14 +40,21 @@ def test_install_multi_output(
     verify_cli_command([foobar_desktop], env=env, stdout_contains="Hello from foobar-desktop")
 
 
-# TODO: run without spec as soon as it's implemented
-# @pytest.mark.parametrize("package_name", [None, "simple-package"])
-@pytest.mark.parametrize("package_name", ["simple-package"])
+@pytest.mark.parametrize(
+    "package_name",
+    [
+        "simple-package",
+        pytest.param(
+            None, marks=pytest.mark.xfail(reason="Inferring specs is not yet implemented")
+        ),
+    ],
+)
+@pytest.mark.parametrize(
+    "relative",
+    [True, False],
+)
 def test_install_path_dependency(
-    pixi: Path,
-    tmp_path: Path,
-    build_data: Path,
-    package_name: str | None,
+    pixi: Path, tmp_path: Path, build_data: Path, package_name: str | None, relative: bool
 ) -> None:
     """Test installing a pixi project from a git repository."""
     # Make it one level deeper so that we do no pollute git with the global
@@ -56,6 +63,8 @@ def test_install_path_dependency(
 
     # Specify the project
     source_project = build_data.joinpath("simple-package")
+    if relative:
+        source_project = source_project.relative_to(Path.cwd())
 
     # Build command based on whether package name is provided
     cmd: list[str | Path] = [pixi, "global", "install", "--path", source_project]
@@ -79,8 +88,15 @@ def test_install_path_dependency(
 
 
 # TODO: run without spec as soon as it's implemented
-# @pytest.mark.parametrize("package_name", [None, "simple-package"])
-@pytest.mark.parametrize("package_name", ["simple-package"])
+@pytest.mark.parametrize(
+    "package_name",
+    [
+        "simple-package",
+        pytest.param(
+            None, marks=pytest.mark.xfail(reason="Inferring specs is not yet implemented")
+        ),
+    ],
+)
 def test_install_git_repository(
     pixi: Path,
     tmp_path: Path,
