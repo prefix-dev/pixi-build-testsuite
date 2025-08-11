@@ -80,7 +80,7 @@ def test_install_path_dependency(
     source_from_manifest = Path(
         manifest["envs"]["simple-package"]["dependencies"]["simple-package"]["path"]
     )
-    assert source_from_manifest.relative_to(manifest_path.parent) == source_project
+    assert manifest_path.parent.joinpath(source_from_manifest).resolve() == source_project.resolve()
 
     # Check that the package was installed
     simple_package = pixi_home / "bin" / exec_extension("simple-package")
