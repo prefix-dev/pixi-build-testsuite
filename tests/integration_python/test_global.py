@@ -129,9 +129,7 @@ def test_install_git_repository(
 
 @pytest.mark.slow
 def test_add_git_repository_to_existing_environment(
-    pixi: Path,
-    tmp_path: Path,
-    build_data: Path,
+    pixi: Path, tmp_path: Path, build_data: Path, dummy_channel_1: Path
 ) -> None:
     """Test adding a git-based source package to an existing global environment."""
     # Make it one level deeper so that we do no pollute git with the global
@@ -140,7 +138,16 @@ def test_add_git_repository_to_existing_environment(
 
     # First create a basic environment with a regular package
     verify_cli_command(
-        [pixi, "global", "install", "--environment", "test_env", "python"],
+        [
+            pixi,
+            "global",
+            "install",
+            "--channel",
+            dummy_channel_1,
+            "--environment",
+            "test_env",
+            "dummy-f",
+        ],
         env=env,
     )
 
