@@ -80,6 +80,7 @@ def test_install_path_dependency(
     source_from_manifest = Path(
         manifest["envs"]["simple-package"]["dependencies"]["simple-package"]["path"]
     )
+    assert not source_from_manifest.is_absolute()
     assert manifest_path.parent.joinpath(source_from_manifest).resolve() == source_project.resolve()
 
     # Check that the package was installed
