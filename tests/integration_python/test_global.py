@@ -65,7 +65,7 @@ def test_install_path_dependency(
     # Test install
     verify_cli_command(cmd, env=env)
 
-    # Ensure that path is relative to the manifest
+    # Ensure that path is relative to the manifest directory
     manifest_path = pixi_home.joinpath("manifests", "pixi-global.toml")
     manifest = tomllib.loads(manifest_path.read_text())
     source_from_manifest = Path(
