@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+import tomllib
 
 from .common import ExitCode, exec_extension, git_test_repo, verify_cli_command
 
@@ -42,7 +43,7 @@ def test_install_multi_output(
 # TODO: run without spec as soon as it's implemented
 # @pytest.mark.parametrize("package_name", [None, "simple-package"])
 @pytest.mark.parametrize("package_name", ["simple-package"])
-def test_install_path_dependency_basic(
+def test_install_path_dependency(
     pixi: Path,
     tmp_path: Path,
     build_data: Path,
@@ -64,6 +65,14 @@ def test_install_path_dependency_basic(
     # Test install
     verify_cli_command(cmd, env=env)
 
+    # Ensure that path is relative to the manifest
+    manifest_path = pixi_home.joinpath("manifests", "pixi-global.toml")
+    manifest = tomllib.loads(manifest_path.read_text())
+    source_from_manifest = Path(
+        manifest["envs"]["simple-package"]["dependencies"]["simple-package"]["path"]
+    )
+    assert source_from_manifest.relative_to(manifest_path.parent) == source_project
+
     # Check that the package was installed
     simple_package = pixi_home / "bin" / exec_extension("simple-package")
     verify_cli_command([simple_package], env=env, stdout_contains="hello from simple-package")
@@ -72,7 +81,7 @@ def test_install_path_dependency_basic(
 # TODO: run without spec as soon as it's implemented
 # @pytest.mark.parametrize("package_name", [None, "simple-package"])
 @pytest.mark.parametrize("package_name", ["simple-package"])
-def test_install_git_repository_basic(
+def test_install_git_repository(
     pixi: Path,
     tmp_path: Path,
     build_data: Path,
