@@ -194,7 +194,7 @@ def git_test_repo(source_dir: Path, repo_name: str, target_dir: Path) -> str:
     repo_path: Path = target_dir / repo_name
 
     # Copy source directory to temp
-    shutil.copytree(source_dir, repo_path)
+    shutil.copytree(source_dir, repo_path, copy_function=shutil.copy)
 
     # Initialize git repository in the copied source
     subprocess.run(
@@ -212,10 +212,11 @@ def git_test_repo(source_dir: Path, repo_name: str, target_dir: Path) -> str:
         capture_output=True,
     )
     subprocess.run(
-        ["git", "commit", "--message", "Initial commit", "--author", "Bot <bot@prefix.dev>"],
+        ["git", "commit", "--message", "Initial commit"],
         cwd=repo_path,
         check=True,
         capture_output=True,
+        env={"GIT_AUTHOR_NAME": "Bot", "GIT_AUTHOR_EMAIL": "bot@prefix.dev"},
     )
 
     return f"file://{repo_path}"
