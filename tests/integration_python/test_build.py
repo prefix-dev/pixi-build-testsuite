@@ -284,6 +284,10 @@ def test_build_using_rattler_build_backend(
     assert "array-api-extra" in package_to_be_built.name
     assert package_to_be_built.exists()
 
+    # check that immediately repeating the build also works (prefix-dev/pixi-build-backends#287)
+    verify_cli_command(
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+    )
 
 def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
