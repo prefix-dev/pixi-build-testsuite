@@ -222,7 +222,7 @@ def test_add_git_repository_to_existing_environment(
 
 
 @pytest.mark.slow
-def test_global_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
+def test_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
     """Test that pixi global update works with path dependencies."""
     # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
