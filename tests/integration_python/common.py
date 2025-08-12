@@ -212,7 +212,7 @@ def git_test_repo(source_dir: Path, repo_name: str, target_dir: Path) -> str:
         capture_output=True,
     )
     subprocess.run(
-        ["git", "commit", "--message", "Initial commit"],
+        ["git", "commit", "--message", "Initial commit", "--author", "Bot <bot@prefix.dev>"],
         cwd=repo_path,
         check=True,
         capture_output=True,
