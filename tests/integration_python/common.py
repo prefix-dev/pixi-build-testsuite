@@ -212,11 +212,22 @@ def git_test_repo(source_dir: Path, repo_name: str, target_dir: Path) -> str:
         capture_output=True,
     )
     subprocess.run(
+        ["git", "config", "user.email", "bot@prefix.dev"],
+        cwd=repo_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Bot"],
+        cwd=repo_path,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
         ["git", "commit", "--message", "Initial commit"],
         cwd=repo_path,
         check=True,
         capture_output=True,
-        env={"GIT_AUTHOR_NAME": "Bot", "GIT_AUTHOR_EMAIL": "bot@prefix.dev"},
     )
 
     return f"file://{repo_path}"
