@@ -8,11 +8,6 @@ Make sure you have `pixi` available in your terminal.
 Navigate to this directory and run:
 
 ```shell
-# Configure the CMake project
-pixi run configure
-
-# Build the executable
-pixi run build
 
 # Start the build executable
 pixi run start

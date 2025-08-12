@@ -432,7 +432,7 @@ def test_source_path(
     project = "cpp-with-path-to-source"
     test_data = build_data.joinpath(project)
 
-    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True,  copy_function=shutil.copy)
 
     verify_cli_command(
         [
