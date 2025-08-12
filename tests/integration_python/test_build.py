@@ -427,7 +427,7 @@ def test_source_path(
     pixi: Path, build_data: Path, tmp_pixi_workspace: Path
 ) -> None:
     """
-    Test path in `[package.build.source.location]`
+    Test path in `[package.build.source]`
     """
     project = "cpp-with-path-to-source"
     test_data = build_data.joinpath(project)
