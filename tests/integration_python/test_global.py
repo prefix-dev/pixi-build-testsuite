@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 import pytest
@@ -218,3 +219,46 @@ def test_add_git_repository_to_existing_environment(
     # Check that the package was added to the existing environment
     simple_package = pixi_home / "bin" / exec_extension("simple-package")
     verify_cli_command([simple_package], env=env, stdout_contains="hello from simple-package")
+
+
+@pytest.mark.slow
+def test_global_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
+    """Test that pixi global update works with path dependencies."""
+    # Make it one level deeper so that we do no pollute git with the global
+    pixi_home = tmp_path / "pixi_home"
+    env = {"PIXI_HOME": str(pixi_home)}
+
+    # Create a modifiable copy of simple-package
+    source_project = tmp_path / "simple-package-copy"
+
+    shutil.copytree(build_data.joinpath("simple-package"), source_project)
+
+    # Install the package from the path
+    verify_cli_command(
+        [pixi, "global", "install", "--path", source_project, "simple-package"],
+        env=env,
+    )
+
+    # Check that the package was installed with original message
+    simple_package = pixi_home / "bin" / exec_extension("simple-package")
+    verify_cli_command([simple_package], env=env, stdout_contains="hello from simple-package")
+
+    # Modify the package to output a different message
+    recipe_path = source_project / "recipe.yaml"
+    recipe_content = recipe_path.read_text()
+    updated_recipe = recipe_content.replace(
+        "echo hello from simple-package", "echo goodbye from simple-package"
+    )
+    recipe_path.write_text(updated_recipe)
+
+    # Run global sync - this should NOT pick up the changes
+    verify_cli_command([pixi, "global", "sync"], env=env)
+
+    # Verify the old message is still there (sync doesn't update)
+    verify_cli_command([simple_package], env=env, stdout_contains="hello from simple-package")
+
+    # Run global update - this SHOULD pick up the changes
+    verify_cli_command([pixi, "global", "update"], env=env)
+
+    # Verify the new message is now there
+    verify_cli_command([simple_package], env=env, stdout_contains="goodbye from simple-package")
