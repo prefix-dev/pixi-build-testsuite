@@ -231,7 +231,11 @@ def test_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
     # Create a modifiable copy of simple-package
     source_project = tmp_path / "simple-package-copy"
 
-    shutil.copytree(build_data.joinpath("simple-package"), source_project)
+    # by using shutil.copy, we change the metadata and therefore get a higher timestamp
+    # that way we make sure that we don't use old caches
+    shutil.copytree(
+        build_data.joinpath("simple-package"), source_project, copy_function=shutil.copy
+    )
 
     # Install the package from the path
     verify_cli_command(
