@@ -86,14 +86,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set environment variables for tmate session
-        run: |
-          echo "PIXI_BIN_DIR=${{ env.PIXI_WORKSPACE }}/artifacts" >> $GITHUB_ENV
-          echo "BUILD_BACKENDS_BIN_DIR=${{ env.PIXI_WORKSPACE }}/artifacts" >> $GITHUB_ENV
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-
       - name: Run integration tests
         run: pixi run --locked test-slow
         working-directory: ${{ env.PIXI_WORKSPACE }}
