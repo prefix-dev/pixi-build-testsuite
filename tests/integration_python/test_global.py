@@ -8,7 +8,6 @@ import tomllib
 from .common import ExitCode, exec_extension, git_test_repo, verify_cli_command
 
 
-@pytest.mark.slow
 @pytest.mark.xfail(reason="This isn't implemented yet")
 def test_install_multi_output(
     pixi: Path,
@@ -169,7 +168,6 @@ def test_install_git_repository(
     verify_cli_command([simple_package], env=env, stdout_contains="hello from simple-package")
 
 
-@pytest.mark.slow
 def test_add_git_repository_to_existing_environment(
     pixi: Path, tmp_path: Path, build_data: Path, dummy_channel_1: Path
 ) -> None:
@@ -221,7 +219,6 @@ def test_add_git_repository_to_existing_environment(
     verify_cli_command([simple_package], env=env, stdout_contains="hello from simple-package")
 
 
-@pytest.mark.slow
 def test_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
     """Test that pixi global update works with path dependencies."""
     # Make it one level deeper so that we do no pollute git with the global
