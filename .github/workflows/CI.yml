@@ -55,7 +55,7 @@ jobs:
           BUILD_BACKENDS_BIN_DIR: ${{ github.workspace }}/artifacts
 
   test-windows-x86_64:
-    timeout-minutes: 60
+    timeout-minutes: 10
     name: Build test Windows x86_64
     runs-on: windows-latest
     steps:
