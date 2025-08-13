@@ -86,6 +86,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Run integration tests
         run: pixi run --locked test-slow
         working-directory: ${{ env.PIXI_WORKSPACE }}
