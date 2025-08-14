@@ -233,7 +233,7 @@ def test_install_multi_output_failing(
     env = {"PIXI_HOME": str(pixi_home)}
 
     # Specify the project
-    source_project = build_data.joinpath("multi-output")
+    source_project = build_data.joinpath("multi-output-simple")
 
     # Test install without any specs mentioned
     # It should tell you which outputs are available
@@ -241,7 +241,7 @@ def test_install_multi_output_failing(
         [pixi, "global", "install", "--path", source_project],
         ExitCode.FAILURE,
         env=env,
-        stderr_contains=["multiple package outputs found", "foobar-desktop", "bizbar", "foobar"],
+        stderr_contains=["multiple package outputs found", "bizbar", "foobar"],
     )
 
 
@@ -256,7 +256,7 @@ def test_install_multi_output_single(
     env = {"PIXI_HOME": str(pixi_home)}
 
     # Specify the project
-    source_project = build_data.joinpath("multi-output")
+    source_project = build_data.joinpath("multi-output-simple")
 
     # Test install and explicitly requesting `foobar`
     verify_cli_command([pixi, "global", "install", "--path", source_project, "foobar"], env=env)
@@ -277,7 +277,7 @@ def test_install_multi_output_multiple(
     env = {"PIXI_HOME": str(pixi_home)}
 
     # Specify the project
-    source_project = build_data.joinpath("multi-output")
+    source_project = build_data.joinpath("multi-output-simple")
 
     # Test install and explicitly requesting `foobar` and `bizbar`
     verify_cli_command(
