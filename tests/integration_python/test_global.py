@@ -8,47 +8,9 @@ import tomllib
 from .common import ExitCode, exec_extension, git_test_repo, verify_cli_command
 
 
-@pytest.mark.xfail(reason="This isn't implemented yet")
-def test_install_multi_output(
-    pixi: Path,
-    tmp_path: Path,
-    build_data: Path,
-) -> None:
-    """Test installing a pixi project from a git repository."""
-    # Make it one level deeper so that we do no pollute git with the global
-    pixi_home = tmp_path / "pixi_home"
-    env = {"PIXI_HOME": str(pixi_home)}
-
-    # Specify the project
-    source_project = build_data.joinpath("multi-output")
-
-    # Test install without any specs mentioned
-    # It should tell you which outputs are available
-    verify_cli_command(
-        [pixi, "global", "install", "--path", source_project],
-        ExitCode.FAILURE,
-        env=env,
-        stderr_contains=["multiple outputs", "foobar", "bizbar", "foobar-desktop"],
-    )
-
-    # Test install and explicitly requesting `foobar-desktop`
-    verify_cli_command(
-        [pixi, "global", "install", "--path", source_project, "foobar-desktop"], env=env
-    )
-
-    # Check that the package was installed
-    foobar_desktop = pixi_home / "bin" / exec_extension("foobar-desktop")
-    verify_cli_command([foobar_desktop], env=env, stdout_contains="Hello from foobar-desktop")
-
-
 @pytest.mark.parametrize(
     "package_name",
-    [
-        "simple-package",
-        pytest.param(
-            None, marks=pytest.mark.xfail(reason="Inferring specs is not yet implemented")
-        ),
-    ],
+    ["simple-package", None],
 )
 @pytest.mark.parametrize(
     "relative",
@@ -131,12 +93,7 @@ def test_sync(pixi: Path, tmp_path: Path, build_data: Path, relative: bool) -> N
 
 @pytest.mark.parametrize(
     "package_name",
-    [
-        "simple-package",
-        pytest.param(
-            None, marks=pytest.mark.xfail(reason="Inferring specs is not yet implemented")
-        ),
-    ],
+    ["simple-package", None],
 )
 def test_install_git_repository(
     pixi: Path,
@@ -263,3 +220,72 @@ def test_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
 
     # Verify the new message is now there
     verify_cli_command([simple_package], env=env, stdout_contains="goodbye from simple-package")
+
+
+def test_install_multi_output_failing(
+    pixi: Path,
+    tmp_path: Path,
+    build_data: Path,
+) -> None:
+    """Test installing a pixi project from a git repository."""
+    # Make it one level deeper so that we do no pollute git with the global
+    pixi_home = tmp_path / "pixi_home"
+    env = {"PIXI_HOME": str(pixi_home)}
+
+    # Specify the project
+    source_project = build_data.joinpath("multi-output")
+
+    # Test install without any specs mentioned
+    # It should tell you which outputs are available
+    verify_cli_command(
+        [pixi, "global", "install", "--path", source_project],
+        ExitCode.FAILURE,
+        env=env,
+        stderr_contains=["multiple package outputs found", "foobar-desktop", "bizbar", "foobar"],
+    )
+
+
+def test_install_multi_output_single(
+    pixi: Path,
+    tmp_path: Path,
+    build_data: Path,
+) -> None:
+    """Test installing a pixi project from a git repository."""
+    # Make it one level deeper so that we do no pollute git with the global
+    pixi_home = tmp_path / "pixi_home"
+    env = {"PIXI_HOME": str(pixi_home)}
+
+    # Specify the project
+    source_project = build_data.joinpath("multi-output")
+
+    # Test install and explicitly requesting `foobar`
+    verify_cli_command([pixi, "global", "install", "--path", source_project, "foobar"], env=env)
+
+    # Check that the package was installed
+    foobar = pixi_home / "bin" / exec_extension("foobar")
+    verify_cli_command([foobar], env=env, stdout_contains="Hello from foobar")
+
+
+def test_install_multi_output_multiple(
+    pixi: Path,
+    tmp_path: Path,
+    build_data: Path,
+) -> None:
+    """Test installing a pixi project from a git repository."""
+    # Make it one level deeper so that we do no pollute git with the global
+    pixi_home = tmp_path / "pixi_home"
+    env = {"PIXI_HOME": str(pixi_home)}
+
+    # Specify the project
+    source_project = build_data.joinpath("multi-output")
+
+    # Test install and explicitly requesting `foobar` and `bizbar`
+    verify_cli_command(
+        [pixi, "global", "install", "--path", source_project, "foobar", "bizbar"], env=env
+    )
+
+    # Check that the packages were installed
+    foobar = pixi_home / "bin" / exec_extension("foobar")
+    bizbar = pixi_home / "bin" / exec_extension("bizbar")
+    verify_cli_command([foobar], env=env, stdout_contains="Hello from foobar")
+    verify_cli_command([bizbar], env=env, stdout_contains="Hello from bizbar")
