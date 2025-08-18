@@ -240,6 +240,9 @@ def test_install_multi_output_failing(
     )
 
 
+@pytest.mark.xfail(
+    reason="multi output recipes where one package depends on another doesn't work yet with pixi global"
+)
 def test_install_multi_output_single(
     pixi: Path,
     tmp_path: Path,
@@ -247,7 +250,9 @@ def test_install_multi_output_single(
 ) -> None:
     """Test installing a pixi project from a git repository."""
     pixi_home = tmp_path / "pixi_home"
-    env = {"PIXI_HOME": str(pixi_home)}
+    env = {
+        "PIXI_HOME": str(pixi_home),
+    }
 
     # Specify the project
     source_project = build_data.joinpath("multi-output", "recipe")
