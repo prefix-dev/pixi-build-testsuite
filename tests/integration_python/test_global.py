@@ -302,7 +302,7 @@ def test_install_recursive_source_run_dependencies(
     # Specify the project
     source_project = build_data.joinpath("recursive_source_run_dep", "package_a")
 
-    verify_cli_command([pixi, "global", "install", "-vvv", "--path", source_project], env=env)
+    verify_cli_command([pixi, "global", "install", "--path", source_project], env=env)
 
     # Check that package_a is exposed and works
     package_a = pixi_home / "bin" / exec_extension("package-a")
