@@ -20,7 +20,6 @@ def test_install_path_dependency(
     pixi: Path, tmp_path: Path, build_data: Path, package_name: str | None, relative: bool
 ) -> None:
     """Test installing a pixi project from a git repository."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
@@ -102,7 +101,6 @@ def test_install_git_repository(
     package_name: str | None,
 ) -> None:
     """Test installing a pixi project from a git repository."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
@@ -129,7 +127,6 @@ def test_add_git_repository_to_existing_environment(
     pixi: Path, tmp_path: Path, build_data: Path, dummy_channel_1: Path
 ) -> None:
     """Test adding a git-based source package to an existing global environment."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
@@ -178,7 +175,6 @@ def test_add_git_repository_to_existing_environment(
 
 def test_update(pixi: Path, tmp_path: Path, build_data: Path) -> None:
     """Test that pixi global update works with path dependencies."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
@@ -228,12 +224,11 @@ def test_install_multi_output_failing(
     build_data: Path,
 ) -> None:
     """Test installing a pixi project from a git repository."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
     # Specify the project
-    source_project = build_data.joinpath("multi-output-simple")
+    source_project = build_data.joinpath("multi-output", "recipe")
 
     # Test install without any specs mentioned
     # It should tell you which outputs are available
@@ -251,19 +246,20 @@ def test_install_multi_output_single(
     build_data: Path,
 ) -> None:
     """Test installing a pixi project from a git repository."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
     # Specify the project
-    source_project = build_data.joinpath("multi-output-simple")
+    source_project = build_data.joinpath("multi-output", "recipe")
 
     # Test install and explicitly requesting `foobar`
-    verify_cli_command([pixi, "global", "install", "--path", source_project, "foobar"], env=env)
+    verify_cli_command(
+        [pixi, "global", "install", "--path", source_project, "foobar-desktop"], env=env
+    )
 
     # Check that the package was installed
-    foobar = pixi_home / "bin" / exec_extension("foobar")
-    verify_cli_command([foobar], env=env, stdout_contains="Hello from foobar")
+    foobar_desktop = pixi_home / "bin" / exec_extension("foobar")
+    verify_cli_command([foobar_desktop], env=env, stdout_contains="Hello from foobar-desktop")
 
 
 def test_install_multi_output_multiple(
@@ -272,12 +268,11 @@ def test_install_multi_output_multiple(
     build_data: Path,
 ) -> None:
     """Test installing a pixi project from a git repository."""
-    # Make it one level deeper so that we do no pollute git with the global
     pixi_home = tmp_path / "pixi_home"
     env = {"PIXI_HOME": str(pixi_home)}
 
     # Specify the project
-    source_project = build_data.joinpath("multi-output-simple")
+    source_project = build_data.joinpath("multi-output", "recipe")
 
     # Test install and explicitly requesting `foobar` and `bizbar`
     verify_cli_command(
@@ -289,3 +284,45 @@ def test_install_multi_output_multiple(
     bizbar = pixi_home / "bin" / exec_extension("bizbar")
     verify_cli_command([foobar], env=env, stdout_contains="Hello from foobar")
     verify_cli_command([bizbar], env=env, stdout_contains="Hello from bizbar")
+
+
+def test_install_recursive_source_run_dependencies(
+    pixi: Path,
+    tmp_path: Path,
+    build_data: Path,
+) -> None:
+    pixi_home = tmp_path / "pixi_home"
+    env = {"PIXI_HOME": str(pixi_home)}
+
+    # Specify the project
+    source_project = build_data.joinpath("recursive_source_run_dep", "package_a")
+
+    verify_cli_command([pixi, "global", "install", "--path", source_project], env=env)
+
+    # Check that package_a is exposed and works
+    package_a = pixi_home / "bin" / exec_extension("package-a")
+    verify_cli_command(
+        [package_a], env=env, stdout_contains=["Pixi Build is number 1", "hello from package-b"]
+    )
+
+    # Check that package_b is not exposed
+    package_b = pixi_home / "bin" / exec_extension("package_b")
+    assert not package_b.is_file()
+
+
+def test_install_recursive_source_build_dependencies(
+    pixi: Path,
+    tmp_path: Path,
+    build_data: Path,
+) -> None:
+    pixi_home = tmp_path / "pixi_home"
+    env = {"PIXI_HOME": str(pixi_home)}
+
+    # Specify the project
+    source_project = build_data.joinpath("recursive_source_build_dep", "package_a")
+
+    verify_cli_command([pixi, "global", "install", "--path", source_project], env=env)
+
+    # Check that package_a is exposed and works
+    package_a = pixi_home / "bin" / exec_extension("package-a")
+    verify_cli_command([package_a], env=env, stdout_contains=["5 + 3 = 8"])
