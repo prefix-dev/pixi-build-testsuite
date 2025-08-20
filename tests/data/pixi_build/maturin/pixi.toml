@@ -24,7 +24,6 @@ version = "*"
 
 [package.build.configuration]
 compilers = ["rust"]
-noarch = false
 
 [package.host-dependencies]
 maturin = "*"
