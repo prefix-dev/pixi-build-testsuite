@@ -7,9 +7,9 @@ build:
   script:
     - if: win
       then:
-        - mkdir %PREFIX%/bin
-        - echo @echo off > %PREFIX%/bin/package-b.bat
-        - echo echo hello from package-b >> %PREFIX%/bin/package-b.bat
+        - mkdir %PREFIX%\\bin
+        - echo @echo off > %PREFIX%\\bin\\package-b.bat
+        - echo echo hello from package-b >> %PREFIX%\\bin\\package-b.bat
       else:
         - mkdir -p $PREFIX/bin
         - echo "#!/usr/bin/env bash" > $PREFIX/bin/package-b
