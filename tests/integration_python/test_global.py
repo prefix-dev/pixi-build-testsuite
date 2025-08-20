@@ -311,7 +311,7 @@ def test_install_recursive_source_run_dependencies(
     )
 
     # Check that package_b is not exposed
-    package_b = pixi_home / "bin" / exec_extension("package_b")
+    package_b = pixi_home / "bin" / exec_extension("package-b")
     assert not package_b.is_file()
 
 
