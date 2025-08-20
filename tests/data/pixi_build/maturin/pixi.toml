@@ -23,10 +23,7 @@ name = "pixi-build-python"
 version = "*"
 
 [package.build.configuration]
-noarch = false
-
-[package.build-dependencies]
-rust = "*"
+compilers = ["rust"]
 
 [package.host-dependencies]
 maturin = "*"
