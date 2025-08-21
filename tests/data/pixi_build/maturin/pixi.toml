@@ -22,7 +22,7 @@ version = "0.1.0"
 name = "pixi-build-python"
 version = "*"
 
-[package.build.configuration]
+[package.build.config]
 noarch = false
 
 [package.build-dependencies]

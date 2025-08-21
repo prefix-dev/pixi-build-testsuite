@@ -16,5 +16,5 @@ version = "0.1.0"
 [package.build]
 backend = { name = "pixi-build-cmake", version = "*" }
 
-[package.build.target.unix.configuration]
+[package.build.target.unix.config]
 invalid_target_config_key = "this_should_also_fail"

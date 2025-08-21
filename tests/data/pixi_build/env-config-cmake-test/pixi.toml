@@ -16,5 +16,5 @@ version = "0.1.0"
 [package.build]
 backend = { name = "pixi-build-cmake", version = "*" }
 
-[package.build.configuration]
+[package.build.config]
 env = { CUSTOM_BUILD_VAR = "test_value", PIXI_TEST_ENV = "pixi_cmake_test", BUILD_MESSAGE = "hello_from_env" }

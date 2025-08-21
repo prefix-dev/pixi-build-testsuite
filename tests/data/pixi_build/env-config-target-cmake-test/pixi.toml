@@ -16,11 +16,11 @@ version = "0.1.0"
 [package.build]
 backend = { name = "pixi-build-cmake", version = "*" }
 
-[package.build.configuration]
+[package.build.config]
 env = { GLOBAL_ENV_VAR = "global_value" }
 
-[package.build.target.unix.configuration]
+[package.build.target.unix.config]
 env = { UNIX_SPECIFIC_VAR = "unix_value", PLATFORM_TYPE = "unix" }
 
-[package.build.target.win-64.configuration]
+[package.build.target.win-64.config]
 env = { WIN_SPECIFIC_VAR = "windows_value", PLATFORM_TYPE = "win-64" }
