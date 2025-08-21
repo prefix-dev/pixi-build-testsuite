@@ -284,6 +284,11 @@ def test_build_using_rattler_build_backend(
     assert "array-api-extra" in package_to_be_built.name
     assert package_to_be_built.exists()
 
+    # check that immediately repeating the build also works (prefix-dev/pixi-build-backends#287)
+    verify_cli_command(
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+    )
+
 
 def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
@@ -420,3 +425,32 @@ def test_recursive_source_build_dependencies(
         ],
         stdout_contains=["Package A application starting", "5 + 3 = 8"],
     )
+
+
+@pytest.mark.slow
+def test_source_path(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    """
+    Test path in `[package.build.source]`
+    """
+    project = "cpp-with-path-to-source"
+    test_data = build_data.joinpath(project)
+
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True,  copy_function=shutil.copy)
+
+    verify_cli_command(
+        [
+            pixi,
+            "build",
+            "-v",
+            "--manifest-path",
+            tmp_pixi_workspace,
+            "--output-dir",
+            tmp_pixi_workspace,
+        ],
+    )
+
+    # Ensure that exactly one conda package has been built
+    built_packages = list(tmp_pixi_workspace.glob("*.conda"))
+    assert len(built_packages) == 1
