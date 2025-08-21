@@ -23,9 +23,6 @@ name = "pixi-build-python"
 version = "*"
 
 [package.build.config]
-noarch = false
-
-[package.build.configuration]
 compilers = ["rust"]
 
 [package.host-dependencies]
