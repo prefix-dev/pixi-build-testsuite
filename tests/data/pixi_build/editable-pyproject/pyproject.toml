@@ -20,19 +20,17 @@ preview = ["pixi-build"]
 # package.
 hatchling = "==1.26.3"
 
-# The build-system section defines the build system that will be used to turn
+# The build section defines the build system that will be used to turn
 # the source code of this package into a conda package. Similarly to the above
 # [build-system] section this section instructs pixi which build backend to
-# use. The build-backend is an executable that is installed and invoked by
+# use. The build.backend is an executable that is installed and invoked by
 # pixi with the sole purpose to build the package.
-[tool.pixi.package.build]
+[tool.pixi.package.build.backend]
 # The name of the build backend to use. This name refers both to the name of
 # the package that provides the build backend and the name of the executable
 # inside the package that is invoked.
-#
-# The `build-backend` key also functions as a dependency declaration. At least
-# a version specifier must be added.
-backend = { name = "pixi-build-python", version = "0.1.*" }
+name = "pixi-build-python"
+version = "0.1.*"
 # These are the conda channels that are used to resolve the dependencies of the
 # build backend package.
 channels = [
