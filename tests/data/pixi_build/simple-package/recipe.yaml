@@ -7,7 +7,7 @@ build:
   script:
     - if: win
       then:
-        - mkdir %PREFIX%\bin
+        - if not exist "%PREFIX%\bin" mkdir "%PREFIX%\bin"
         - echo @echo off > %PREFIX%\bin\simple-package.bat
         - echo echo hello from simple-package >> %PREFIX%\bin\simple-package.bat
       else:
