@@ -21,6 +21,9 @@ description = "Showcases how to create a simple C++ executable with Pixi"
 name = "sdl_example"
 version = "0.1.0"
 
+[package.build]
+source.path = "project"
+
 [package.build.backend]
 name = "pixi-build-cmake"
 version = "0.3.*"
@@ -28,7 +31,6 @@ channels = [
   "https://prefix.dev/pixi-build-backends",
   "https://prefix.dev/conda-forge",
 ]
-source.path = "project"
 
 [package.host-dependencies]
 # This ensures that SDL2 is available at build time.
