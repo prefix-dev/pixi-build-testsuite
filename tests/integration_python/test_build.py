@@ -305,7 +305,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Specifying dependencies",
+        stderr_contains="Please specify all binary dependencies in the recipe",
     )
 
 
@@ -326,7 +326,7 @@ def test_error_manifest_deps_no_default(
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Specifying dependencies",
+        stderr_contains="Please specify all binary dependencies in the recipe",
     )
 
 
