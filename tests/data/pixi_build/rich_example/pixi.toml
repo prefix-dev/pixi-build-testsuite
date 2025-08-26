@@ -19,7 +19,7 @@ channels = [
   "https://prefix.dev/conda-forge",
 ]
 name = "pixi-build-python"
-version = "0.1.*"
+version = "*"
 
 [package.host-dependencies]
 hatchling = "==1.26.3"
