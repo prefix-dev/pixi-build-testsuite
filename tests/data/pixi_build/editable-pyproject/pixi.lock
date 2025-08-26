@@ -171,10 +171,11 @@ packages:
   subdir: noarch
   depends:
   - python
-  - python
+  - python *
   input:
-    hash: 889d55dab4991178cc600d248aa949d46b3320610c96558e1c77cd3787e3eed1
-    globs: []
+    hash: 0e5b879b8be1bd55540bc912ca881382625113b8fca75bf88b2e3a9a1093b4d3
+    globs:
+    - pyproject.toml
 - conda: https://prefix.dev/conda-forge/linux-64/ld_impl_linux-64-2.43-h712a8e2_2.conda
   sha256: 7c91cea91b13f4314d125d1bedb9d03a29ebbd5080ccdea70260363424646dbe
   md5: 048b02e3962f066da18efe3a21b77672
