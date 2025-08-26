@@ -23,8 +23,9 @@ packages:
   constrains:
   - __glibc >=2.17
   input:
-    hash: 5c6b87ccc217e203b30f5941e35070c974dbc9ca87158c0ef748012885dbc659
-    globs: []
+    hash: 1ca9e38876bf1fec6c4bc59b915984d2d5b2b27282e059bc8cc5770c66d5c864
+    globs:
+    - Cargo.toml
 - conda: .
   name: simple-app
   version: 0.1.0
@@ -33,13 +34,15 @@ packages:
   constrains:
   - __osx >=11.0
   input:
-    hash: 5c6b87ccc217e203b30f5941e35070c974dbc9ca87158c0ef748012885dbc659
-    globs: []
+    hash: 1ca9e38876bf1fec6c4bc59b915984d2d5b2b27282e059bc8cc5770c66d5c864
+    globs:
+    - Cargo.toml
 - conda: .
   name: simple-app
   version: 0.1.0
   build: hbf21a9e_0
   subdir: win-64
   input:
-    hash: 5c6b87ccc217e203b30f5941e35070c974dbc9ca87158c0ef748012885dbc659
-    globs: []
+    hash: 1ca9e38876bf1fec6c4bc59b915984d2d5b2b27282e059bc8cc5770c66d5c864
+    globs:
+    - Cargo.toml

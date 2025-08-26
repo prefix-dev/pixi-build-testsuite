@@ -702,10 +702,11 @@ packages:
   subdir: noarch
   depends:
   - python
-  - python
+  - python *
   input:
-    hash: e2c986bdb618affbd7bceec1c072a9e96e0b667efeb9fc1ea39e9a776cc7586b
-    globs: []
+    hash: 54927b0b01b4d99eefbceaeadb52d1996cca9986b3240e16543cf61501d4a3d3
+    globs:
+    - pyproject.toml
 - conda: https://prefix.dev/conda-forge/linux-64/tk-8.6.13-noxft_hd72426e_102.conda
   sha256: a84ff687119e6d8752346d1d408d5cf360dee0badd487a472aa8ddedfdc219e1
   md5: a0116df4f4ed05c303811a837d5b39d8
