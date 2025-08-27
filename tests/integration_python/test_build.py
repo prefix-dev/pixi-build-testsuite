@@ -290,6 +290,37 @@ def test_build_using_rattler_build_backend(
     )
 
 
+@pytest.mark.parametrize(
+    ("backend", "non_incremental_evidence"), [
+        ("pixi-build-rust", "Compiling simple-app"),
+        ("pixi-build-cmake", "Configuring done")
+    ]
+)
+def test_incremental_builds(
+    pixi: Path,
+    tmp_pixi_workspace: Path,
+    build_data: Path,
+    backend: str,
+    non_incremental_evidence: str
+) -> None:
+    test_workspace = build_data / "minimal-backend-workspaces" / backend
+    shutil.copytree(test_workspace, tmp_pixi_workspace, dirs_exist_ok=True)
+    manifest_path = tmp_pixi_workspace / "pixi.toml" 
+
+    verify_cli_command(
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        stderr_contains=non_incremental_evidence,
+        strip_ansi=True,
+    )
+
+    # immediately repeating the build should give evidence of incremental compilation
+    verify_cli_command(
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        stderr_excludes=non_incremental_evidence,
+        strip_ansi=True,
+    )
+
+
 def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey project to the tmp_pixi_workspace

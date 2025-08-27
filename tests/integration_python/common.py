@@ -2,6 +2,7 @@ import os
 import platform
 import shutil
 import subprocess
+import re
 from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import IntEnum
@@ -78,6 +79,7 @@ def verify_cli_command(
     env: dict[str, str] | None = None,
     cwd: str | Path | None = None,
     reset_env: bool = False,
+    strip_ansi: bool = False,
 ) -> Output:
     base_env = {} if reset_env else dict(os.environ)
     complete_env = base_env if env is None else base_env | env
@@ -93,6 +95,13 @@ def verify_cli_command(
     # Decode stdout and stderr explicitly using UTF-8
     stdout = process.stdout.decode("utf-8", errors="replace")
     stderr = process.stderr.decode("utf-8", errors="replace")
+
+    if strip_ansi:
+        # sanitise coloured output to match plain strings
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        stdout = ansi_escape.sub('', stdout)
+        stderr = ansi_escape.sub('', stderr)
+
     returncode = process.returncode
     output = Output(command, stdout, stderr, returncode)
     print(f"command: {command}, stdout: {stdout}, stderr: {stderr}, code: {returncode}")
