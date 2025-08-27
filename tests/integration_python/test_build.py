@@ -329,6 +329,25 @@ def test_error_manifest_deps_no_default(
         stderr_contains="Please specify all binary dependencies in the recipe",
     )
 
+def test_rattler_build_source_dependency(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    shutil.copytree(test_data / "source-dependency", tmp_pixi_workspace / "source-dependency")
+    manifest_path = tmp_pixi_workspace / "source-dependency" / "b" / "pixi.toml"
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+        expected_exit_code=ExitCode.SUCCESS,
+        stderr_contains="hello from package a!",
+    )
 
 @pytest.mark.slow
 def test_recursive_source_run_dependencies(

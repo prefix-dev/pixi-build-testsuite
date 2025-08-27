@@ -1,0 +1,13 @@
+package:
+  name: b
+  version: 0.1.0
+
+build:
+  script:
+    - cat $BUILD_PREFIX/hi
+    - mkdir $PREFIX
+    - cp $BUILD_PREFIX/hi $PREFIX/hi-from-a
+
+requirements:
+  build:
+    - a

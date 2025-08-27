@@ -1,0 +1,18 @@
+version: 6
+environments:
+  default:
+    channels:
+    - url: https://conda.anaconda.org/conda-forge/
+    packages:
+      linux-64:
+      - conda: b
+packages:
+- conda: b
+  name: b
+  version: 0.1.0
+  build: hb0f4dca_0
+  subdir: linux-64
+  input:
+    hash: e66aab7340d090bf85d29b4a78020ec74214bbc9cc560f29f7b4b300e344c26f
+    globs:
+    - variants.yaml
