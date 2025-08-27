@@ -30,7 +30,7 @@ hatchling = "==1.26.3"
 # the package that provides the build backend and the name of the executable
 # inside the package that is invoked.
 name = "pixi-build-python"
-version = "0.1.*"
+version = "*"
 # These are the conda channels that are used to resolve the dependencies of the
 # build backend package.
 channels = [
