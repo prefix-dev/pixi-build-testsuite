@@ -336,7 +336,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Specifying dependencies",
+        stderr_contains="Please specify all binary dependencies in the recipe",
     )
 
 
@@ -357,7 +357,28 @@ def test_error_manifest_deps_no_default(
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Specifying dependencies",
+        stderr_contains="Please specify all binary dependencies in the recipe",
+    )
+
+
+def test_rattler_build_source_dependency(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    shutil.copytree(test_data / "source-dependency", tmp_pixi_workspace / "source-dependency")
+    manifest_path = tmp_pixi_workspace / "source-dependency" / "b" / "pixi.toml"
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+        expected_exit_code=ExitCode.SUCCESS,
+        stderr_contains="hello from package a!",
     )
 
 
@@ -459,16 +480,14 @@ def test_recursive_source_build_dependencies(
 
 
 @pytest.mark.slow
-def test_source_path(
-    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
-) -> None:
+def test_source_path(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     """
     Test path in `[package.build.source]`
     """
     project = "cpp-with-path-to-source"
     test_data = build_data.joinpath(project)
 
-    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True,  copy_function=shutil.copy)
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True, copy_function=shutil.copy)
 
     verify_cli_command(
         [
