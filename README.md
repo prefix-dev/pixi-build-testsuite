@@ -35,20 +35,18 @@ pixi run test
 
 To test a combination of PRs from this testsuite with PRs from [Pixi] or [pixi-build-backends]:
 
-1. Create a `.env.ci` file with the following environment variables:
+1. Create a `.env.ci` file with PR numbers:
    ```shell
-   # Override pixi repository/branch
-   PIXI_CI_REPO_NAME="your-username/pixi"
-   PIXI_CI_REPO_BRANCH="your-feature-branch"
+   # Test with specific PR from pixi repository
+   PIXI_PR_NUMBER="123"
    
-   # Override build backends repository/branch  
-   BUILD_BACKENDS_CI_REPO_NAME="your-username/pixi-build-backends"
-   BUILD_BACKENDS_CI_REPO_BRANCH="your-feature-branch"
+   # Test with specific PR from pixi-build-backends repository  
+   BUILD_BACKENDS_PR_NUMBER="456"
    ```
-2. The CI will use these overrides when downloading artifacts for testing
+2. The CI will download artifacts from these PRs instead of main branch
 3. **Important**: Remove `.env.ci` before merging to main (CI will prevent merge if present)
 
-This allows you to test how your testsuite changes work with specific branches from the other repositories.
+This allows you to test how your testsuite changes work with specific PRs from the other repositories.
 
 
 [Pixi]: https://github.com/prefix-dev/pixi

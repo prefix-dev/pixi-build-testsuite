@@ -98,9 +98,9 @@ def verify_cli_command(
 
     if strip_ansi:
         # sanitise coloured output to match plain strings
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        stdout = ansi_escape.sub('', stdout)
-        stderr = ansi_escape.sub('', stderr)
+        ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+        stdout = ansi_escape.sub("", stdout)
+        stderr = ansi_escape.sub("", stderr)
 
     returncode = process.returncode
     output = Output(command, stdout, stderr, returncode)

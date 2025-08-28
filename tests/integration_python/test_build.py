@@ -291,21 +291,19 @@ def test_build_using_rattler_build_backend(
 
 
 @pytest.mark.parametrize(
-    ("backend", "non_incremental_evidence"), [
-        ("pixi-build-rust", "Compiling simple-app"),
-        ("pixi-build-cmake", "Configuring done")
-    ]
+    ("backend", "non_incremental_evidence"),
+    [("pixi-build-rust", "Compiling simple-app"), ("pixi-build-cmake", "Configuring done")],
 )
 def test_incremental_builds(
     pixi: Path,
     tmp_pixi_workspace: Path,
     build_data: Path,
     backend: str,
-    non_incremental_evidence: str
+    non_incremental_evidence: str,
 ) -> None:
     test_workspace = build_data / "minimal-backend-workspaces" / backend
     shutil.copytree(test_workspace, tmp_pixi_workspace, dirs_exist_ok=True)
-    manifest_path = tmp_pixi_workspace / "pixi.toml" 
+    manifest_path = tmp_pixi_workspace / "pixi.toml"
 
     verify_cli_command(
         [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
