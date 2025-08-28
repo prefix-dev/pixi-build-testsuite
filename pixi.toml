@@ -40,6 +40,7 @@ test-specific-test = { cmd = "pytest -k '{{ test_substring }}'", args = [
 # Update one test channel by passing on value of `mappings.toml`
 # e.g. "multiple_versions_channel_1"
 build-repos = { cmd = "python scripts/build-repos.py", description = "Update and build external repositories (PIXI and BUILD_BACKENDS)" }
+check-branch-override = { cmd = "python scripts/check-branch-override.py", description = "Check for branch override files that shouldn't be merged" }
 download-artifacts = { cmd = "python scripts/download-artifacts.py" }
 update-lockfiles = { cmd = "python scripts/update-lockfiles.py {{ folder }}", args = [
   { "arg" = "folder", "default" = "" },

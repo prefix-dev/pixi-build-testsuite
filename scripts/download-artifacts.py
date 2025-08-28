@@ -170,22 +170,28 @@ def get_matching_artifact(
     return None
 
 
+def load_env_files() -> None:
+    """Load both .env and .env.ci files if they exist."""
+    project_root = Path(__file__).parent.parent
+    env_file = project_root / ".env"
+    env_ci_file = project_root / ".env.ci"
+
+    for env in [env_file, env_ci_file]:
+        if env.exists():
+            load_dotenv(env)
+            console.print(f"[green]Loaded environment variables from {env_file}")
+
+
 def download_github_artifact(
     github_token: str | None,
     output_dir: Path,
     repo: str,
     workflow: str,
+    target_branch: str,
     run_id: int | None = None,
 ) -> None:
     # Get current platform
-    if repo == "prefix-dev/pixi":
-        current_platform = get_current_platform()
-        console.print(f"[blue]Detected platform: {current_platform}")
-    elif repo == "prefix-dev/pixi-build-backends":
-        current_platform = get_current_platform()
-        console.print(f"[blue]Detected platform: {current_platform}")
-    else:
-        raise ValueError(f"Unsupported repository: {repo}")
+    current_platform = get_current_platform()
 
     # Initialize GitHub client
     gh = Github(github_token)
@@ -195,9 +201,9 @@ def download_github_artifact(
     console.print(f"[green]Connected to repository: {repository.full_name}")
 
     # Find the artifact for our platform
-    if repo == "prefix-dev/pixi":
+    if repo.endswith("/pixi"):
         artifact_name_pattern = f"pixi-{current_platform}"
-    elif repo == "prefix-dev/pixi-build-backends":
+    elif repo.endswith("/pixi-build-backends"):
         artifact_name_pattern = f"pixi-build-backends-{current_platform}"
     else:
         raise ValueError(f"Unsupported repository: {repo}")
@@ -226,9 +232,9 @@ def download_github_artifact(
 
         console.print(f"[blue]Found workflow: {target_workflow.name}")
 
-        # Get latest workflow run from main branch
-        console.print("[blue]Finding latest workflow run from main branch")
-        runs = target_workflow.get_runs(branch="main", event="push")
+        # Get latest workflow run from target branch
+        console.print(f"[blue]Finding latest workflow run from {target_branch} branch")
+        runs = target_workflow.get_runs(branch=target_branch, event="push")
         # Check the past five runs until a suitable candidate is found
         for selected_run in itertools.islice(runs, 3):
             artifacts = selected_run.get_artifacts()
@@ -260,8 +266,8 @@ def download_github_artifact(
 
 
 def main() -> None:
-    # Load environment variables from .env file
-    load_dotenv()
+    # Load environment files
+    load_env_files()
 
     parser = argparse.ArgumentParser(description="Download artifacts from GitHub Actions")
     parser.add_argument(
@@ -281,13 +287,19 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    # Set repo and workflow based on repository choice
+    # Set repo and workflow based on repository choice, with CI overrides
     if args.repo == "pixi":
-        repo = "prefix-dev/pixi"
+        repo = os.getenv("PIXI_CI_REPO_NAME", "prefix-dev/pixi")
         workflow = "CI"
+        target_branch = os.getenv("PIXI_CI_REPO_BRANCH", "main")
     elif args.repo == "pixi-build-backends":
-        repo = "prefix-dev/pixi-build-backends"
+        repo = os.getenv("BUILD_BACKENDS_CI_REPO_NAME", "prefix-dev/pixi-build-backends")
         workflow = "Testsuite"
+        target_branch = os.getenv("BUILD_BACKENDS_CI_REPO_BRANCH", "main")
+
+    # Show override info if non-default values are being used
+    if target_branch != "main" or repo != f"prefix-dev/{args.repo}":
+        console.print(f"[yellow]CI overrides active: using {repo} branch {target_branch}")
 
     # Hardcode output directory to "artifacts"
     output_dir = Path("artifacts")
@@ -302,7 +314,9 @@ def main() -> None:
         sys.exit()
 
     try:
-        download_github_artifact(github_token, output_dir, repo, workflow, args.run_id)
+        download_github_artifact(
+            github_token, output_dir, repo, workflow, target_branch, args.run_id
+        )
         console.print("[green][SUCCESS] Download completed successfully!")
         sys.exit(0)
     except Exception as e:
