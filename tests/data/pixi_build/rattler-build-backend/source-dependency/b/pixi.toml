@@ -7,4 +7,3 @@ backend = { name = "pixi-build-rattler-build", version = "0.3.*" }
 
 [package.build-dependencies]
 a = { path = "../a" }
-

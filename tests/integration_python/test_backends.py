@@ -32,6 +32,8 @@ def test_pixi_minimal_backend(pixi_project: Path, pixi: Path, tmp_pixi_workspace
         [pixi, "run", "-v", "--locked", "--manifest-path", manifest, "start"],
         stdout_contains="Build backend works",
     )
+
+
 # Enable after the backends have been released
 # def test_nameless_versionless(pixi: Path, tmp_pixi_workspace: Path):
 #     project_dir = repo_root().joinpath("tests", "data", "pixi_build", "name-and-version-less-package")
