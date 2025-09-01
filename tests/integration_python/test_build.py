@@ -502,3 +502,28 @@ def test_source_path(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> 
     # Ensure that exactly one conda package has been built
     built_packages = list(tmp_pixi_workspace.glob("*.conda"))
     assert len(built_packages) == 1
+
+
+@pytest.mark.slow
+def test_pip_config(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+    """
+    Check that `package.build.config.pip-config` is picked up,
+    and can be used to alter the build directory for meson-python.
+    """
+    project = "python-builddir"
+    test_data = build_data.joinpath(project)
+
+    target_dir = tmp_pixi_workspace.joinpath(project)
+    shutil.copytree(test_data, target_dir)
+    manifest_path = target_dir.joinpath("pixi.toml")
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+    )
+    assert target_dir.joinpath("src", "mybuilddir", "build.ninja").is_file()
