@@ -23,7 +23,7 @@ version = "*"
 source.path = "src"
 
 [package.build.config]
-pip-config = ["builddir=mybuilddir"]
+extra-args = ["-Cbuilddir=mybuilddir"]
 
 [package.host-dependencies]
 meson-python = "*"
