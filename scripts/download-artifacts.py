@@ -170,22 +170,28 @@ def get_matching_artifact(
     return None
 
 
+def load_env_files() -> None:
+    """Load both .env and .env.ci files if they exist."""
+    project_root = Path(__file__).parent.parent
+    env_file = project_root / ".env"
+    env_ci_file = project_root / ".env.ci"
+
+    for env in [env_file, env_ci_file]:
+        if env.exists():
+            load_dotenv(env)
+            console.print(f"[green]Loaded environment variables from {env}")
+
+
 def download_github_artifact(
     github_token: str | None,
     output_dir: Path,
     repo: str,
     workflow: str,
     run_id: int | None = None,
+    pr_number: int | None = None,
 ) -> None:
     # Get current platform
-    if repo == "prefix-dev/pixi":
-        current_platform = get_current_platform()
-        console.print(f"[blue]Detected platform: {current_platform}")
-    elif repo == "prefix-dev/pixi-build-backends":
-        current_platform = get_current_platform()
-        console.print(f"[blue]Detected platform: {current_platform}")
-    else:
-        raise ValueError(f"Unsupported repository: {repo}")
+    current_platform = get_current_platform()
 
     # Initialize GitHub client
     gh = Github(github_token)
@@ -195,9 +201,9 @@ def download_github_artifact(
     console.print(f"[green]Connected to repository: {repository.full_name}")
 
     # Find the artifact for our platform
-    if repo == "prefix-dev/pixi":
+    if repo.endswith("/pixi"):
         artifact_name_pattern = f"pixi-{current_platform}"
-    elif repo == "prefix-dev/pixi-build-backends":
+    elif repo.endswith("/pixi-build-backends"):
         artifact_name_pattern = f"pixi-build-backends-{current_platform}"
     else:
         raise ValueError(f"Unsupported repository: {repo}")
@@ -210,7 +216,33 @@ def download_github_artifact(
         selected_run = repository.get_workflow_run(run_id)
         artifacts = selected_run.get_artifacts()
         target_artifact = get_matching_artifact(artifacts, artifact_name_pattern)
+    elif pr_number:
+        # Get workflow run from PR
+        console.print(f"[blue]Finding workflow run for PR #{pr_number}")
+        pr = repository.get_pull(pr_number)
+        console.print(f"[blue]PR #{pr_number}: {pr.title} (head: {pr.head.sha})")
 
+        # Get workflow runs for the PR's head commit
+        workflows = repository.get_workflows()
+        target_workflow = None
+        for wf in workflows:
+            if wf.name == workflow:
+                target_workflow = wf
+                break
+
+        if not target_workflow:
+            console.print(f"[red]Could not find workflow: {workflow}")
+            raise ValueError(f"Could not find workflow: {workflow}")
+
+        console.print(f"[blue]Found workflow: {target_workflow.name}")
+
+        # Get workflow runs for the PR head commit
+        runs = target_workflow.get_runs(head_sha=pr.head.sha)
+        for selected_run in itertools.islice(runs, 3):
+            artifacts = selected_run.get_artifacts()
+            target_artifact = get_matching_artifact(artifacts, artifact_name_pattern)
+            if target_artifact:
+                break
     else:
         # Get the latest workflow run for the specified workflow
         workflows = repository.get_workflows()
@@ -260,8 +292,8 @@ def download_github_artifact(
 
 
 def main() -> None:
-    # Load environment variables from .env file
-    load_dotenv()
+    # Load environment files
+    load_env_files()
 
     parser = argparse.ArgumentParser(description="Download artifacts from GitHub Actions")
     parser.add_argument(
@@ -285,9 +317,18 @@ def main() -> None:
     if args.repo == "pixi":
         repo = "prefix-dev/pixi"
         workflow = "CI"
+        pr_number = os.getenv("PIXI_PR_NUMBER")
     elif args.repo == "pixi-build-backends":
         repo = "prefix-dev/pixi-build-backends"
         workflow = "Testsuite"
+        pr_number = os.getenv("BUILD_BACKENDS_PR_NUMBER")
+
+    # Convert PR number to int if provided
+    pr_number_int = int(pr_number) if pr_number and pr_number.isdigit() else None
+
+    # Show override info if PR number is being used
+    if pr_number_int:
+        console.print(f"[yellow]Using PR #{pr_number_int} from {repo}")
 
     # Hardcode output directory to "artifacts"
     output_dir = Path("artifacts")
@@ -302,7 +343,9 @@ def main() -> None:
         sys.exit()
 
     try:
-        download_github_artifact(github_token, output_dir, repo, workflow, args.run_id)
+        download_github_artifact(
+            github_token, output_dir, repo, workflow, args.run_id, pr_number_int
+        )
         console.print("[green][SUCCESS] Download completed successfully!")
         sys.exit(0)
     except Exception as e:

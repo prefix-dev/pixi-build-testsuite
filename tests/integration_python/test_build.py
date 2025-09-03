@@ -290,6 +290,35 @@ def test_build_using_rattler_build_backend(
     )
 
 
+@pytest.mark.parametrize(
+    ("backend", "non_incremental_evidence"),
+    [("pixi-build-rust", "Compiling simple-app"), ("pixi-build-cmake", "Configuring done")],
+)
+def test_incremental_builds(
+    pixi: Path,
+    tmp_pixi_workspace: Path,
+    build_data: Path,
+    backend: str,
+    non_incremental_evidence: str,
+) -> None:
+    test_workspace = build_data / "minimal-backend-workspaces" / backend
+    shutil.copytree(test_workspace, tmp_pixi_workspace, dirs_exist_ok=True)
+    manifest_path = tmp_pixi_workspace / "pixi.toml"
+
+    verify_cli_command(
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        stderr_contains=non_incremental_evidence,
+        strip_ansi=True,
+    )
+
+    # immediately repeating the build should give evidence of incremental compilation
+    verify_cli_command(
+        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        stderr_excludes=non_incremental_evidence,
+        strip_ansi=True,
+    )
+
+
 def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     test_data = build_data.joinpath("rattler-build-backend")
     # copy the whole smokey project to the tmp_pixi_workspace
@@ -305,7 +334,7 @@ def test_error_manifest_deps(pixi: Path, build_data: Path, tmp_pixi_workspace: P
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Specifying dependencies",
+        stderr_contains="Please specify all binary dependencies in the recipe",
     )
 
 
@@ -326,7 +355,28 @@ def test_error_manifest_deps_no_default(
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Specifying dependencies",
+        stderr_contains="Please specify all binary dependencies in the recipe",
+    )
+
+
+def test_rattler_build_source_dependency(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    shutil.copytree(test_data / "source-dependency", tmp_pixi_workspace / "source-dependency")
+    manifest_path = tmp_pixi_workspace / "source-dependency" / "b" / "pixi.toml"
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+        expected_exit_code=ExitCode.SUCCESS,
+        stderr_contains="hello from package a!",
     )
 
 
@@ -428,16 +478,14 @@ def test_recursive_source_build_dependencies(
 
 
 @pytest.mark.slow
-def test_source_path(
-    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
-) -> None:
+def test_source_path(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     """
     Test path in `[package.build.source]`
     """
     project = "cpp-with-path-to-source"
     test_data = build_data.joinpath(project)
 
-    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True,  copy_function=shutil.copy)
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True, copy_function=shutil.copy)
 
     verify_cli_command(
         [

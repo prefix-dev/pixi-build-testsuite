@@ -2,7 +2,6 @@ version: 6
 environments:
   default:
     channels:
-    - url: https://prefix.dev/pixi-build-backends/
     - url: https://prefix.dev/conda-forge/
     packages:
       linux-64:
@@ -23,8 +22,9 @@ packages:
   constrains:
   - __glibc >=2.17
   input:
-    hash: 5c6b87ccc217e203b30f5941e35070c974dbc9ca87158c0ef748012885dbc659
-    globs: []
+    hash: 83ee677498b294f4bc5bb9fb0dffa5eb235b217d1c1e96c6b526b9a24b5b6cec
+    globs:
+    - Cargo.toml
 - conda: .
   name: simple-app
   version: 0.1.0
@@ -33,13 +33,15 @@ packages:
   constrains:
   - __osx >=11.0
   input:
-    hash: 5c6b87ccc217e203b30f5941e35070c974dbc9ca87158c0ef748012885dbc659
-    globs: []
+    hash: 83ee677498b294f4bc5bb9fb0dffa5eb235b217d1c1e96c6b526b9a24b5b6cec
+    globs:
+    - Cargo.toml
 - conda: .
   name: simple-app
   version: 0.1.0
   build: hbf21a9e_0
   subdir: win-64
   input:
-    hash: 5c6b87ccc217e203b30f5941e35070c974dbc9ca87158c0ef748012885dbc659
-    globs: []
+    hash: 83ee677498b294f4bc5bb9fb0dffa5eb235b217d1c1e96c6b526b9a24b5b6cec
+    globs:
+    - Cargo.toml

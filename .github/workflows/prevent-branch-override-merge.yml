@@ -1,0 +1,17 @@
+name: Prevent Branch Override Merge
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-branch-override:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@main
+
+      - name: Check for branch override files
+        run: pixi run check-branch-override

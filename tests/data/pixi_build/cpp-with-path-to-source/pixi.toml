@@ -25,12 +25,12 @@ version = "0.1.0"
 source.path = "project"
 
 [package.build.backend]
-name = "pixi-build-cmake"
-version = "0.3.*"
 channels = [
   "https://prefix.dev/pixi-build-backends",
   "https://prefix.dev/conda-forge",
 ]
+name = "pixi-build-cmake"
+version = "*"
 
 [package.host-dependencies]
 # This ensures that SDL2 is available at build time.
