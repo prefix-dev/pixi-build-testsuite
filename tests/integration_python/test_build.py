@@ -505,9 +505,9 @@ def test_source_path(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> 
 
 
 @pytest.mark.slow
-def test_pip_config(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+def test_extra_args(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     """
-    Check that `package.build.config.pip-config` is picked up,
+    Check that `package.build.config.extra-args` are picked up,
     and can be used to alter the build directory for meson-python.
     """
     project = "python-builddir"
