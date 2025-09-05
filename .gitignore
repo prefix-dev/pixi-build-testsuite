@@ -13,3 +13,4 @@ pytest-temp
 .env
 artifacts
 *.local.*
+AGENTS.md
