@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from .common import ExitCode, verify_cli_command
+from .common import CURRENT_PLATFORM, ExitCode, verify_cli_command
 
 
 def test_build(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
@@ -15,13 +15,16 @@ def test_build(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
         [
             pixi,
             "build",
-            "-v",
             "--manifest-path",
             package_manifest,
             "--output-dir",
             tmp_pixi_workspace,
         ],
     )
+
+    # Ensure that we don't create directories we don't need
+    assert not tmp_pixi_workspace.joinpath("noarch").exists()
+    assert not tmp_pixi_workspace.joinpath(CURRENT_PLATFORM).exists()
 
     # Ensure that exactly three conda packages have been built
     built_packages = list(tmp_pixi_workspace.glob("*.conda"))

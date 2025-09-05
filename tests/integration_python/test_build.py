@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .common import ExitCode, Workspace, verify_cli_command
+from .common import CURRENT_PLATFORM, ExitCode, Workspace, verify_cli_command
 
 
 def test_build_conda_package(
@@ -15,13 +15,16 @@ def test_build_conda_package(
         [
             pixi,
             "build",
-            "-v",
             "--manifest-path",
             simple_workspace.package_dir,
             "--output-dir",
             simple_workspace.workspace_dir,
         ],
     )
+
+    # Ensure that we don't create directories we don't need
+    assert not simple_workspace.workspace_dir.joinpath("noarch").exists()
+    assert not simple_workspace.workspace_dir.joinpath(CURRENT_PLATFORM).exists()
 
     # Ensure that exactly one conda package has been built
     built_packages = list(simple_workspace.workspace_dir.glob("*.conda"))
@@ -53,13 +56,16 @@ def test_build_conda_package_variants(
         [
             pixi,
             "build",
-            "-v",
             "--manifest-path",
             simple_workspace.package_dir,
             "--output-dir",
             simple_workspace.workspace_dir,
         ],
     )
+
+    # Ensure that we don't create directories we don't need
+    assert not simple_workspace.workspace_dir.joinpath("noarch").exists()
+    assert not simple_workspace.workspace_dir.joinpath(CURRENT_PLATFORM).exists()
 
     # Ensure that exactly two conda packages have been built
     built_packages = list(simple_workspace.workspace_dir.glob("*.conda"))
@@ -491,7 +497,6 @@ def test_source_path(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> 
         [
             pixi,
             "build",
-            "-v",
             "--manifest-path",
             tmp_pixi_workspace,
             "--output-dir",
