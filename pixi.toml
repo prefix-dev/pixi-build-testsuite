@@ -79,7 +79,7 @@ typos = "typos --force-exclude"
 # Feature to build recipes
 #
 [feature.recipes.dependencies]
-rattler-build = ">=0.46,<0.47"
+rattler-build = ">=0.47,<0.48"
 
 [feature.recipes.tasks.build-backends]
 cmd = "rattler-build build --recipe-dir empty --output-dir ."
