@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+import tomllib
 
 from .common import CURRENT_PLATFORM, ExitCode, Workspace, verify_cli_command
 
@@ -534,7 +535,9 @@ def test_extra_args(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> N
     assert target_dir.joinpath("src", "mybuilddir", "build.ninja").is_file()
 
 
-def test_target_specific_dependency(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+def test_target_specific_dependency(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path, target_specific_channel_1: str
+) -> None:
     """
     Check that target-specific dependencies are not solved for on other targets.
     Regression test for prefix-dev/pixi#4542.
@@ -545,6 +548,9 @@ def test_target_specific_dependency(pixi: Path, build_data: Path, tmp_pixi_works
     target_dir = tmp_pixi_workspace.joinpath(project)
     shutil.copytree(test_data, target_dir)
     manifest_path = target_dir.joinpath("pixi.toml")
+
+    manifest = tomllib.loads(manifest_path.read_text())
+    manifest["workspace"]["channels"] = [target_specific_channel_1]
 
     verify_cli_command(
         [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],

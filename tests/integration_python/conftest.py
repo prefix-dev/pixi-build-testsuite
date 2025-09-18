@@ -215,3 +215,8 @@ def dummy_channel_1(channels: Path) -> str:
 @pytest.fixture
 def multiple_versions_channel_1(channels: Path) -> str:
     return channels.joinpath("multiple_versions_channel_1").as_uri()
+
+
+@pytest.fixture
+def target_specific_channel_1(channels: Path) -> str:
+    return channels.joinpath("target_specific_channel_1").as_uri()
