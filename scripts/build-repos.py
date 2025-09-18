@@ -43,13 +43,13 @@ def run_command(
     return result.returncode, result.stdout, result.stderr
 
 
-def is_git_repository(path: Path) -> bool:
-    """Check if the given path is a git repository."""
+def is_git_worktree(path: Path) -> bool:
+    """Check if the given path is inside a git work tree (repo or worktree)."""
     if not path.exists() or not path.is_dir():
         return False
 
-    git_dir = path / ".git"
-    return git_dir.is_dir()
+    returncode, stdout, _ = run_command(["git", "rev-parse", "--is-inside-work-tree"], cwd=path)
+    return returncode == 0 and stdout.strip().lower() == "true"
 
 
 def get_current_branch(repo_path: Path) -> str | None:
@@ -95,11 +95,10 @@ def process_repository(repo_path: Path, repo_name: str) -> None:
     print(f"Processing {repo_name}: {repo_path}")
     print(f"{'=' * 60}")
 
-    # Verify it's a git repository
-    if not is_git_repository(repo_path):
-        raise GitRepositoryError(f"{repo_path} is not a valid git repository")
+    if not is_git_worktree(repo_path):
+        raise GitRepositoryError(f"{repo_path} is not a valid git worktree")
 
-    print("✅ Verified git repository")
+    print("✅ Verified git worktree")
 
     # Check current branch
     if current_branch := get_current_branch(repo_path):
