@@ -547,10 +547,5 @@ def test_target_specific_dependency(pixi: Path, build_data: Path, tmp_pixi_works
     manifest_path = target_dir.joinpath("pixi.toml")
 
     verify_cli_command(
-        [
-            pixi,
-            "build",
-            "--manifest-path",
-            manifest_path,
-        ],
+        [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )
