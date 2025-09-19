@@ -1,10 +1,14 @@
 import argparse
 import itertools
+import json
 import os
 import platform
+import shutil
+import subprocess
 import sys
 import tempfile
 import zipfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
@@ -101,12 +105,18 @@ def download_and_extract_artifact(
                     f"Could not find pixi binary in archive. Archive contents: {file_list}"
                 )
 
+            final_path = output_dir / Path(pixi_binary).name
+            if final_path.exists():
+                if final_path.is_dir():
+                    shutil.rmtree(final_path)
+                else:
+                    final_path.unlink()
+
             # Extract the binary
             zip_ref.extract(pixi_binary, output_dir)
 
             # Move to correct location if it was in a subdirectory
             extracted_path = output_dir / pixi_binary
-            final_path = output_dir / Path(pixi_binary).name
 
             if extracted_path != final_path:
                 extracted_path.rename(final_path)
@@ -141,9 +151,15 @@ def download_and_extract_artifact(
 
             # Extract all executables
             for executable in backend_executables:
+                final_path = output_dir / Path(executable).name
+                if final_path.exists():
+                    if final_path.is_dir():
+                        shutil.rmtree(final_path)
+                    else:
+                        final_path.unlink()
+
                 zip_ref.extract(executable, output_dir)
                 extracted_path = output_dir / executable
-                final_path = output_dir / Path(executable).name
 
                 if extracted_path != final_path:
                     extracted_path.rename(final_path)
@@ -182,6 +198,54 @@ def load_env_files() -> None:
             console.print(f"[green]Loaded environment variables from {env}")
 
 
+def get_token_from_gh() -> str | None:
+    """Attempt to obtain a GitHub token via the GitHub CLI."""
+    gh_executable = shutil.which("gh")
+    if not gh_executable:
+        console.print("[yellow]GitHub CLI not found; skipping GH auth token lookup")
+        return None
+
+    try:
+        result = subprocess.run(
+            [gh_executable, "auth", "token"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        console.print(
+            "[yellow]Failed to obtain token via GitHub CLI. "
+            f"Return code: {exc.returncode}"
+        )
+        return None
+
+    token = result.stdout.strip()
+    if not token:
+        console.print("[yellow]GitHub CLI returned an empty token")
+        return None
+
+    console.print("[green]Using token from GitHub CLI authentication")
+    return token
+
+
+def write_metadata(
+    output_dir: Path,
+    repo: str,
+    metadata: dict[str, object],
+) -> None:
+    metadata_path = output_dir / "download-metadata.json"
+    existing: dict[str, object] = {}
+    if metadata_path.exists():
+        try:
+            existing = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            console.print(
+                f"[yellow]Existing metadata file at {metadata_path} is invalid JSON; overwriting"
+            )
+    existing[repo] = metadata
+    metadata_path.write_text(json.dumps(existing, indent=2, sort_keys=True), encoding="utf-8")
+
+
 def download_github_artifact(
     github_token: str | None,
     output_dir: Path,
@@ -210,6 +274,8 @@ def download_github_artifact(
 
     # Get the target_artifact
     target_artifact = None
+    pr_obj = None
+
     if run_id:
         # Use specific run ID - no need to find workflow first
         console.print(f"[blue]Using specified run ID: {run_id}")
@@ -220,6 +286,7 @@ def download_github_artifact(
         # Get workflow run from PR
         console.print(f"[blue]Finding workflow run for PR #{pr_number}")
         pr = repository.get_pull(pr_number)
+        pr_obj = pr
         console.print(f"[blue]PR #{pr_number}: {pr.title} (head: {pr.head.sha})")
 
         # Get workflow runs for the PR's head commit
@@ -290,6 +357,27 @@ def download_github_artifact(
     # Download and extract the artifact
     download_and_extract_artifact(target_artifact, github_token, output_dir, repo)
 
+    metadata: dict[str, object] = {
+        "artifact": target_artifact.name,
+        "downloaded_at": datetime.now(timezone.utc).isoformat(),
+        "run_id": selected_run.id,
+        "head_sha": selected_run.head_sha,
+        "workflow": workflow,
+    }
+
+    if pr_number is not None:
+        metadata["source"] = "pr"
+        metadata["pr_number"] = pr_number
+        if pr_obj is not None:
+            metadata["pr_title"] = pr_obj.title
+            metadata["head_ref"] = pr_obj.head.ref
+            metadata["head_label"] = pr_obj.head.label
+    else:
+        metadata["source"] = "branch"
+        metadata["branch"] = getattr(selected_run, "head_branch", None) or "main"
+
+    write_metadata(output_dir, repo, metadata)
+
 
 def main() -> None:
     # Load environment files
@@ -303,54 +391,74 @@ def main() -> None:
     parser.add_argument(
         "--run-id",
         type=int,
-        help="Specific workflow run ID to download from (optional)",
+        help="Specific workflow run ID to download from (optional). Requires --repo.",
     )
     parser.add_argument(
-        "repo",
+        "--repo",
         choices=["pixi", "pixi-build-backends"],
-        help="Repository to download from: 'pixi' for pixi binaries or 'pixi-build-backends' for build backend executables",
+        help="Restrict download to a single repository. By default both pixi and pixi-build-backends artifacts are fetched.",
     )
 
     args = parser.parse_args()
 
-    # Set repo and workflow based on repository choice
+    if args.repo is None and args.run_id is not None:
+        console.print("[red][ERROR] --run-id can only be used together with --repo")
+        sys.exit(1)
+
+    targets: list[tuple[str, str, str | None]]
     if args.repo == "pixi":
-        repo = "prefix-dev/pixi"
-        workflow = "CI"
-        pr_number = os.getenv("PIXI_PR_NUMBER")
+        targets = [("prefix-dev/pixi", "CI", os.getenv("PIXI_PR_NUMBER"))]
     elif args.repo == "pixi-build-backends":
-        repo = "prefix-dev/pixi-build-backends"
-        workflow = "Testsuite"
-        pr_number = os.getenv("BUILD_BACKENDS_PR_NUMBER")
+        targets = [
+            (
+                "prefix-dev/pixi-build-backends",
+                "Testsuite",
+                os.getenv("BUILD_BACKENDS_PR_NUMBER"),
+            )
+        ]
+    else:
+        targets = [
+            ("prefix-dev/pixi", "CI", os.getenv("PIXI_PR_NUMBER")),
+            (
+                "prefix-dev/pixi-build-backends",
+                "Testsuite",
+                os.getenv("BUILD_BACKENDS_PR_NUMBER"),
+            ),
+        ]
 
-    # Convert PR number to int if provided
-    pr_number_int = int(pr_number) if pr_number and pr_number.isdigit() else None
-
-    # Show override info if PR number is being used
-    if pr_number_int:
-        console.print(f"[yellow]Using PR #{pr_number_int} from {repo}")
-
-    # Hardcode output directory to "artifacts"
+    # Store binaries directly under "artifacts" for compatibility with older tooling
     output_dir = Path("artifacts")
 
     # Get GitHub token from argument or environment
     github_token = args.token or os.getenv("GITHUB_TOKEN")
     if not github_token:
+        github_token = get_token_from_gh()
+    if not github_token:
         console.print("[red][ERROR] No GitHub token provided")
         console.print(
             "[red]  Set GITHUB_TOKEN environment variable, use --token argument, or create a .env file"
         )
-        sys.exit()
-
-    try:
-        download_github_artifact(
-            github_token, output_dir, repo, workflow, args.run_id, pr_number_int
-        )
-        console.print("[green][SUCCESS] Download completed successfully!")
-        sys.exit(0)
-    except Exception as e:
-        console.print(f"[red][ERROR] Download failed: {e}")
         sys.exit(1)
+
+    overall_success = True
+    for repo, workflow, pr_number in targets:
+        pr_number_int = int(pr_number) if pr_number and pr_number.isdigit() else None
+        if pr_number_int:
+            console.print(f"[yellow]Using PR #{pr_number_int} from {repo}")
+
+        try:
+            download_github_artifact(
+                github_token, output_dir, repo, workflow, args.run_id, pr_number_int
+            )
+        except Exception as e:  # noqa: BLE001 - surface context rich message
+            overall_success = False
+            console.print(f"[red][ERROR] Download failed for {repo}: {e}")
+
+    if not overall_success:
+        sys.exit(1)
+
+    console.print("[green][SUCCESS] Download completed successfully!")
+    sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -37,17 +37,34 @@ def pixi() -> Path:
     Returns the path to the Pixi executable.
 
     Uses the PIXI_BIN_DIR environment variable to locate the Pixi directory.
-    Locally, this is typically done via the .env file.
+    Falls back to binaries downloaded into the artifacts directory.
     """
     pixi_bin_dir = os.getenv("PIXI_BIN_DIR")
-    if not pixi_bin_dir:
+
+    if pixi_bin_dir:
+        pixi_bin_path = Path(pixi_bin_dir)
+    else:
+        project_root = Path(__file__).parent.parent
+        candidates = [
+            project_root / "artifacts",
+            project_root / "artifacts" / "pixi",
+        ]
+        pixi_bin_path = None
+        for candidate in candidates:
+            executable_candidate = candidate / exec_extension("pixi")
+            if candidate.is_dir() and executable_candidate.is_file():
+                pixi_bin_path = candidate
+                os.environ["PIXI_BIN_DIR"] = str(candidate)
+                pixi_bin_dir = os.environ["PIXI_BIN_DIR"]
+                break
+
+    if pixi_bin_dir is None and pixi_bin_path is None:
         raise ValueError(
-            "PIXI_BIN_DIR environment variable is not set. "
-            "Please set it to the directory containing the Pixi executable."
+            "Could not determine Pixi binary location. Set PIXI_BIN_DIR or run "
+            "'pixi run download-artifacts --repo pixi'."
         )
 
-    pixi_bin_path = Path(pixi_bin_dir)
-    if not pixi_bin_path.is_dir():
+    if pixi_bin_path is None or not pixi_bin_path.is_dir():
         raise ValueError(
             f"PIXI_BIN_DIR points to '{pixi_bin_dir}' which is not a valid directory. "
             "Please set it to a directory that exists and contains the Pixi executable."
@@ -56,7 +73,10 @@ def pixi() -> Path:
     pixi_executable = pixi_bin_path / exec_extension("pixi")
 
     if not pixi_executable.is_file():
-        raise FileNotFoundError(f"Pixi executable not found at '{pixi_executable}'.")
+        raise FileNotFoundError(
+            f"Pixi executable not found at '{pixi_executable}'. Set PIXI_BIN_DIR or run "
+            "'pixi run download-artifacts --repo pixi'."
+        )
 
     return pixi_executable
 
