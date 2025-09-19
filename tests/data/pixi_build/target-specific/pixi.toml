@@ -21,5 +21,5 @@ hatchling = "*"
 [package.target.unix.host-dependencies]
 package-unix = "*"
 
-[package.target.win.host-dependencies]
+[package.target.win-64.host-dependencies]
 package-windows = "*"

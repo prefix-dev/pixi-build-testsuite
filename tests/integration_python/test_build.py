@@ -2,7 +2,6 @@ import shutil
 from pathlib import Path
 
 import pytest
-import tomllib
 
 from .common import CURRENT_PLATFORM, ExitCode, Workspace, verify_cli_command
 
@@ -549,8 +548,13 @@ def test_target_specific_dependency(
     shutil.copytree(test_data, target_dir)
     manifest_path = target_dir.joinpath("pixi.toml")
 
-    manifest = tomllib.loads(manifest_path.read_text())
-    manifest["workspace"]["channels"] = [target_specific_channel_1]
+    with open(manifest_path, "r") as f:
+        updated_manifest = f.read().replace(
+            "https://prefix.dev/pixi-build-backends", target_specific_channel_1
+        )
+
+    with open(manifest_path, "w") as f:
+        f.write(updated_manifest)
 
     verify_cli_command(
         [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
