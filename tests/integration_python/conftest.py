@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 from pathlib import Path
+from typing import Any, cast
 
 import dotenv
 import pytest
@@ -88,11 +89,19 @@ def _load_artifact_metadata() -> dict[str, object]:
         return {}
 
     try:
-        return json.loads(metadata_file.read_text(encoding="utf-8"))
+        data: Any = json.loads(metadata_file.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:  # pragma: no cover - defensive guard
         raise RuntimeError(
             f"Artifact metadata file at {metadata_file} is not valid JSON. Re-run 'pixi run download-artifacts'."
         ) from exc
+
+    if not isinstance(data, dict):
+        raise RuntimeError(
+            f"Artifact metadata file at {metadata_file} must contain a JSON object. "
+            "Re-run 'pixi run download-artifacts'."
+        )
+
+    return cast(dict[str, object], data)
 
 
 def _validate_artifact_sources() -> None:

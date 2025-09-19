@@ -214,8 +214,7 @@ def get_token_from_gh() -> str | None:
         )
     except subprocess.CalledProcessError as exc:
         console.print(
-            "[yellow]Failed to obtain token via GitHub CLI. "
-            f"Return code: {exc.returncode}"
+            f"[yellow]Failed to obtain token via GitHub CLI. Return code: {exc.returncode}"
         )
         return None
 
