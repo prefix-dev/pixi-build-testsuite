@@ -429,9 +429,7 @@ def main() -> None:
     output_dir = Path("artifacts")
 
     # Get GitHub token from argument or environment
-    github_token = args.token or os.getenv("GITHUB_TOKEN")
-    if not github_token:
-        github_token = get_token_from_gh()
+    github_token = args.token or os.getenv("GITHUB_TOKEN") or get_token_from_gh()
     if not github_token:
         console.print("[red][ERROR] No GitHub token provided")
         console.print(
