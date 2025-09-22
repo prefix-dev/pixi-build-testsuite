@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,6 +21,16 @@ from rich.console import Console
 from rich.progress import track
 
 console = Console()
+
+
+@dataclass(frozen=True)
+class ArtifactTarget:
+    # Repo the target is located in
+    repo: str
+    # The workflow that we use for downloading
+    workflow: str
+    # The PR that contains the target
+    pr_number: str | None
 
 
 def get_current_platform() -> str:
@@ -273,7 +284,7 @@ def download_github_artifact(
 
     # Get the target_artifact
     target_artifact = None
-    pr_obj = None
+    pr = None
 
     if run_id:
         # Use specific run ID - no need to find workflow first
@@ -285,7 +296,6 @@ def download_github_artifact(
         # Get workflow run from PR
         console.print(f"[blue]Finding workflow run for PR #{pr_number}")
         pr = repository.get_pull(pr_number)
-        pr_obj = pr
         console.print(f"[blue]PR #{pr_number}: {pr.title} (head: {pr.head.sha})")
 
         # Get workflow runs for the PR's head commit
@@ -367,10 +377,10 @@ def download_github_artifact(
     if pr_number is not None:
         metadata["source"] = "pr"
         metadata["pr_number"] = pr_number
-        if pr_obj is not None:
-            metadata["pr_title"] = pr_obj.title
-            metadata["head_ref"] = pr_obj.head.ref
-            metadata["head_label"] = pr_obj.head.label
+        if pr is not None:
+            metadata["pr_title"] = pr.title
+            metadata["head_ref"] = pr.head.ref
+            metadata["head_label"] = pr.head.label
     else:
         metadata["source"] = "branch"
         metadata["branch"] = getattr(selected_run, "head_branch", None) or "main"
@@ -404,12 +414,12 @@ def main() -> None:
         console.print("[red][ERROR] --run-id can only be used together with --repo")
         sys.exit(1)
 
-    targets: list[tuple[str, str, str | None]]
+    targets: list[ArtifactTarget]
     if args.repo == "pixi":
-        targets = [("prefix-dev/pixi", "CI", os.getenv("PIXI_PR_NUMBER"))]
+        targets = [ArtifactTarget("prefix-dev/pixi", "CI", os.getenv("PIXI_PR_NUMBER"))]
     elif args.repo == "pixi-build-backends":
         targets = [
-            (
+            ArtifactTarget(
                 "prefix-dev/pixi-build-backends",
                 "Testsuite",
                 os.getenv("BUILD_BACKENDS_PR_NUMBER"),
@@ -417,8 +427,8 @@ def main() -> None:
         ]
     else:
         targets = [
-            ("prefix-dev/pixi", "CI", os.getenv("PIXI_PR_NUMBER")),
-            (
+            ArtifactTarget("prefix-dev/pixi", "CI", os.getenv("PIXI_PR_NUMBER")),
+            ArtifactTarget(
                 "prefix-dev/pixi-build-backends",
                 "Testsuite",
                 os.getenv("BUILD_BACKENDS_PR_NUMBER"),
@@ -438,18 +448,24 @@ def main() -> None:
         sys.exit(1)
 
     overall_success = True
-    for repo, workflow, pr_number in targets:
+    for target in targets:
+        pr_number = target.pr_number
         pr_number_int = int(pr_number) if pr_number and pr_number.isdigit() else None
         if pr_number_int:
-            console.print(f"[yellow]Using PR #{pr_number_int} from {repo}")
+            console.print(f"[yellow]Using PR #{pr_number_int} from {target.repo}")
 
         try:
             download_github_artifact(
-                github_token, output_dir, repo, workflow, args.run_id, pr_number_int
+                github_token,
+                output_dir,
+                target.repo,
+                target.workflow,
+                args.run_id,
+                pr_number_int,
             )
         except Exception as e:  # noqa: BLE001 - surface context rich message
             overall_success = False
-            console.print(f"[red][ERROR] Download failed for {repo}: {e}")
+            console.print(f"[red][ERROR] Download failed for {target.repo}: {e}")
 
     if not overall_success:
         sys.exit(1)
