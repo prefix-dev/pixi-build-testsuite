@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+import rattler
 import tomli_w
 import tomllib
 
@@ -104,8 +105,10 @@ def test_build_conda_package_variants_from_file(
     )
 
     built_packages = list(output_dir.glob("*.conda"))
-    # there are two variants so two conda files should be created
-    assert len(built_packages) == 2
+    if rattler.Platform.current().is_unix:
+        assert len(built_packages) == 3
+    else:
+        assert len(built_packages) == 2
 
 
 def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspace) -> None:
