@@ -8,9 +8,6 @@ name = "variant-files"
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 preview = ["pixi-build"]
 
-[workspace.target.unix]
-build-variant-files = [{ file = "./corp-pinning/unix.yaml" }]
-
 [dependencies]
 variant-files = { path = "." }
 
