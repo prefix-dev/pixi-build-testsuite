@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+import rattler
 import tomli_w
 import tomllib
 
@@ -74,6 +75,40 @@ def test_build_conda_package_variants(
     assert len(built_packages) == 2
     for package in built_packages:
         assert package.exists()
+
+
+def test_build_conda_package_variants_from_file(
+    pixi: Path,
+    tmp_pixi_workspace: Path,
+    build_data: Path,
+    multiple_versions_channel_1: str,
+) -> None:
+    test_workspace = build_data.joinpath("build-variant-files")
+    shutil.copytree(test_workspace, tmp_pixi_workspace, dirs_exist_ok=True)
+
+    manifest_path = tmp_pixi_workspace.joinpath("pixi.toml")
+    manifest = tomllib.loads(manifest_path.read_text())
+    manifest["workspace"]["channels"] = [multiple_versions_channel_1]
+    manifest_path.write_text(tomli_w.dumps(manifest))
+
+    output_dir = tmp_pixi_workspace.joinpath("dist")
+
+    verify_cli_command(
+        [
+            pixi,
+            "build",
+            "--manifest-path",
+            manifest_path,
+            "--output-dir",
+            output_dir,
+        ],
+    )
+
+    built_packages = list(output_dir.glob("*.conda"))
+    if rattler.Platform.current().is_unix:
+        assert len(built_packages) == 3
+    else:
+        assert len(built_packages) == 2
 
 
 def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspace) -> None:
