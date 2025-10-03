@@ -10,6 +10,7 @@ This script:
 """
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -36,11 +37,19 @@ class PixiBuildError(Exception):
 
 
 def run_command(
-    cmd: list[str], cwd: Path | None = None, capture_output: bool = True
+    cmd: list[str],
+    cwd: Path | None = None,
+    capture_output: bool = True,
+    env: dict[str, str] | None = None,
 ) -> tuple[int, str, str]:
     """Run a command and return exit code, stdout, and stderr."""
-    result = subprocess.run(cmd, cwd=cwd, capture_output=capture_output, text=True)
+    result = subprocess.run(cmd, cwd=cwd, capture_output=capture_output, text=True, env=env)
     return result.returncode, result.stdout, result.stderr
+
+
+def executable_name(base: str) -> str:
+    """Return the platform specific executable name."""
+    return f"{base}.exe" if sys.platform.startswith("win") else base
 
 
 def is_git_worktree(path: Path) -> bool:
@@ -87,6 +96,52 @@ def build_executables(repo_path: Path) -> None:
         if stdout:
             error_msg += f" (Output: {stdout})"
         raise PixiBuildError(error_msg)
+
+
+def build_ros_backend(repo_path: Path) -> None:
+    """Build the pixi-build-ros backend located in backends/pixi-build-ros."""
+    ros_backend_dir = repo_path / "backends" / "pixi-build-ros"
+    if not ros_backend_dir.is_dir():
+        print("⚠️ pixi-build-ros backend directory not found, skipping")
+        return
+
+    print(f"🔨 Building pixi-build-ros backend in {ros_backend_dir}")
+    returncode, stdout, stderr = run_command(
+        [
+            "pixi",
+            "install",
+            "--manifest-path",
+            str(ros_backend_dir.joinpath("pixi.toml")),
+        ],
+        cwd=ros_backend_dir,
+    )
+
+    if returncode != 0:
+        error_msg = "Failed to build pixi-build-ros backend"
+        if stderr:
+            error_msg += f": {stderr}"
+        if stdout:
+            error_msg += f" (Output: {stdout})"
+        raise PixiBuildError(error_msg)
+
+    ros_executable = executable_name("pixi-build-ros")
+    source_binary = ros_backend_dir.joinpath(".pixi", "envs", "default", "bin", ros_executable)
+
+    if not source_binary.exists():
+        raise PixiBuildError(
+            f"pixi-build-ros binary not found at '{source_binary}'."
+            " Ensure pixi install completed successfully."
+        )
+
+    target_dir = repo_path / "target" / "pixi" / "release"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_binary = target_dir / ros_executable
+
+    if target_binary.exists():
+        target_binary.unlink()
+
+    shutil.copy2(source_binary, target_binary)
+    print("✅ Successfully built pixi-build-ros backend")
 
 
 def process_repository(repo_path: Path, repo_name: str) -> None:
@@ -156,6 +211,7 @@ def main() -> None:
 
     try:
         process_repository(build_backends_repo_path, "BUILD_BACKENDS_REPO")
+        build_ros_backend(build_backends_repo_path)
     except Exception as e:
         print(f"❌ Error processing BUILD_BACKENDS_REPO: {e}")
         success = False

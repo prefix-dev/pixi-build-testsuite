@@ -233,6 +233,7 @@ def build_backends(load_dotenv: None) -> None:
         "pixi-build-python",
         "pixi-build-rattler-build",
         "pixi-build-rust",
+        "pixi-build-ros",
     ]
 
     if build_backends_dir:
