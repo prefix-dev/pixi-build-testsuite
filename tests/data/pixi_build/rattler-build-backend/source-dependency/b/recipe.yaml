@@ -11,7 +11,7 @@ build:
         copy "%BUILD_PREFIX%\hi" "%PREFIX%\hi-from-a"
       else: |
         cat $BUILD_PREFIX/hi
-        mkdir $PREFIX
+        mkdir -p $PREFIX
         cp $BUILD_PREFIX/hi $PREFIX/hi-from-a
 
 requirements:
