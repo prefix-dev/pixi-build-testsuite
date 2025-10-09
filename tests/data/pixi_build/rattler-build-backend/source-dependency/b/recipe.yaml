@@ -5,14 +5,14 @@ package:
 build:
   script:
     - if: win
-      then: |
-        type "%BUILD_PREFIX%\hi"
-        mkdir -p "%PREFIX%"
-        copy "%BUILD_PREFIX%\hi" "%PREFIX%\hi-from-a"
-      else: |
-        cat $BUILD_PREFIX/hi
-        mkdir -p $PREFIX
-        cp $BUILD_PREFIX/hi $PREFIX/hi-from-a
+      then:
+        - type "%BUILD_PREFIX%\hi"
+        - mkdir -p "%PREFIX%"
+        - copy "%BUILD_PREFIX%\hi" "%PREFIX%\hi-from-a"
+      else:
+        - cat $BUILD_PREFIX/hi
+        - mkdir -p $PREFIX
+        - cp $BUILD_PREFIX/hi $PREFIX/hi-from-a
 
 requirements:
   build:
