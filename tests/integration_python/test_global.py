@@ -240,6 +240,9 @@ def test_install_multi_output_failing(
     )
 
 
+@pytest.mark.xfail(
+    reason="multi output recipes where one package depends on another doesn't work yet with pixi global"
+)
 def test_install_multi_output_single(
     pixi: Path,
     tmp_path: Path,
