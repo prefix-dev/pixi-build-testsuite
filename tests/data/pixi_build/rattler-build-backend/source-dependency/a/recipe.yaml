@@ -5,5 +5,9 @@ package:
 build:
   script:
     - if: win
-      then: echo echo hello from package a! > "%PREFIX%\hi"
-      else: echo "hello from package a!" > $PREFIX/hi
+      then:
+        - mkdir "%PREFIX%"
+        - echo hello from package a! > "%PREFIX%\hi"
+      else:
+        - mkdir -p $PREFIX
+        - echo "hello from package a!" > $PREFIX/hi
