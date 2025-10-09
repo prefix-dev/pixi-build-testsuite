@@ -6,7 +6,7 @@ build:
   script:
     - if: win
       then:
-        - mkdir -p "%PREFIX%"
+        - if not exist "%PREFIX%" mkdir "%PREFIX%"
         - echo hello from package a! > "%PREFIX%\hi"
       else:
         - mkdir -p $PREFIX

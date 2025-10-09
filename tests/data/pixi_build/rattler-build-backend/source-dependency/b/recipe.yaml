@@ -7,7 +7,7 @@ build:
     - if: win
       then:
         - type "%BUILD_PREFIX%\hi"
-        - mkdir -p "%PREFIX%"
+        - if not exist "%PREFIX%" mkdir "%PREFIX%"
         - copy "%BUILD_PREFIX%\hi" "%PREFIX%\hi-from-a"
       else:
         - cat $BUILD_PREFIX/hi
