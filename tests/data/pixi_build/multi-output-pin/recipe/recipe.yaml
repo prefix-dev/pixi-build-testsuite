@@ -1,0 +1,16 @@
+recipe:
+  name: multi-output-pin
+  version: '0.1.0'
+
+build:
+  number: 0
+
+outputs:
+  - package:
+      name: libmulti-output-pin
+  - package:
+      name: multi-output-pin
+    requirements:
+      build:
+        - ${{ pin_subpackage('libmulti-output-pin', exact=True) }}
+

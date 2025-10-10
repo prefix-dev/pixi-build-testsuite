@@ -44,6 +44,19 @@ def test_install(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None
     verify_cli_command([pixi, "install", "-v", "--locked", "--manifest-path", tmp_pixi_workspace])
 
 
+def test_install_multioutput_pin(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
+    project = "multi-output-pin"
+    test_data = build_data.joinpath(project)
+    test_data.joinpath("pixi.lock").unlink(missing_ok=True)
+    shutil.copytree(test_data, tmp_pixi_workspace, dirs_exist_ok=True)
+
+    # Run `install` should work and create a lock file
+    verify_cli_command([pixi, "install", "-v", "--manifest-path", tmp_pixi_workspace])
+
+    # Running `install` again require a lock file update
+    verify_cli_command([pixi, "install", "-v", "--locked", "--manifest-path", tmp_pixi_workspace])
+
+
 def test_available_packages(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     project = "multi-output"
     test_data = build_data.joinpath(project)
