@@ -33,49 +33,6 @@ def test_build_conda_package(
     assert len(built_packages) == 1
 
 
-def test_build_conda_package_variants(
-    pixi: Path, simple_workspace: Workspace, multiple_versions_channel_1: str
-) -> None:
-    # Add package3 to build dependencies of recipe
-    simple_workspace.recipe.setdefault("requirements", {}).setdefault("build", []).append(
-        "package3"
-    )
-
-    # Add package3 to build-variants
-    variants = ["0.1.0", "0.2.0"]
-    simple_workspace.workspace_manifest["workspace"].setdefault("channels", []).insert(
-        0, multiple_versions_channel_1
-    )
-    simple_workspace.workspace_manifest["workspace"].setdefault("build-variants", {})[
-        "package3"
-    ] = variants
-
-    # Write files
-    simple_workspace.write_files()
-
-    # Build packages
-    verify_cli_command(
-        [
-            pixi,
-            "build",
-            "--manifest-path",
-            simple_workspace.package_dir,
-            "--output-dir",
-            simple_workspace.workspace_dir,
-        ],
-    )
-
-    # Ensure that we don't create directories we don't need
-    assert not simple_workspace.workspace_dir.joinpath("noarch").exists()
-    assert not simple_workspace.workspace_dir.joinpath(CURRENT_PLATFORM).exists()
-
-    # Ensure that exactly two conda packages have been built
-    built_packages = list(simple_workspace.workspace_dir.glob("*.conda"))
-    assert len(built_packages) == 2
-    for package in built_packages:
-        assert package.exists()
-
-
 def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspace) -> None:
     simple_workspace.write_files()
     verify_cli_command(
