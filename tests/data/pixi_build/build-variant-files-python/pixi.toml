@@ -1,5 +1,5 @@
 [workspace]
-build-variant-files = [{ file = "./corp-pinning/config.yaml" }]
+build-variants-files = ["./corp-pinning/config.yaml"]
 channels = [
   "https://prefix.dev/pixi-build-backends",
   "https://prefix.dev/conda-forge",
