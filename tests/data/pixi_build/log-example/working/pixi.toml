@@ -19,4 +19,4 @@ channels = [
   "https://prefix.dev/conda-forge",
 ]
 name = "pixi-build-rattler-build"
-version = "*"
+version = "0.3.*"
