@@ -103,7 +103,9 @@ def copytree_with_local_backend(
     kwargs.setdefault("copy_function", copy_manifest)
 
     # Copy tree while ignoring .pixi directories
-    return Path(shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".pixi", "*.conda"), **kwargs))
+    return Path(
+        shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".pixi", "*.conda"), **kwargs)
+    )
 
 
 @dataclass
