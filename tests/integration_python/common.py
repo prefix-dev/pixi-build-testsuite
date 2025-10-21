@@ -100,11 +100,12 @@ def copytree_with_local_backend(
     dst: os.PathLike[str],
     **kwargs: Any,
 ) -> Path:
-    # Remove existing .pixi folders
-    shutil.rmtree(Path(src).joinpath(".pixi"), ignore_errors=True)
-
     kwargs.setdefault("copy_function", copy_manifest)
-    return Path(shutil.copytree(src, dst, **kwargs))
+
+    # Copy tree while ignoring .pixi directories
+    return Path(
+        shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".pixi", "*.conda"), **kwargs)
+    )
 
 
 @dataclass
