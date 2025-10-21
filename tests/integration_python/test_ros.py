@@ -8,11 +8,12 @@ from .common import copytree_with_local_backend, verify_cli_command
 
 
 ROS_WORKSPACE_NAME = "ros-workspace"
-ROS_PACKAGE_DIRS = ["navigator", "navigator_py", "talker-py"]
+ROS_PACKAGE_DIRS = ["navigator", "navigator_py", "distro_less_package"]
 ROS_PACKAGE_OUTPUT_NAMES = {
     "navigator": "ros-humble-navigator",
     "navigator_py": "ros-humble-navigator-py",
-    "talker-py": "ros-humble-talker-py",
+    # The `humble` distro is automatically selected from the channels in the pixi.toml
+    "distro_less_package": "ros-humble-distro-less-package",
 }
 
 
@@ -102,8 +103,8 @@ def test_ros_rebuild_on_source_change(
     output_dir = workspace.joinpath("dist")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    manifest_path = workspace.joinpath("src", "talker-py", "pixi.toml")
-    package_name = ROS_PACKAGE_OUTPUT_NAMES["talker-py"]
+    manifest_path = workspace.joinpath("src", "navigator_py", "pixi.toml")
+    package_name = ROS_PACKAGE_OUTPUT_NAMES["navigator_py"]
 
     def build_and_get_hash() -> str:
         verify_cli_command(
@@ -123,7 +124,7 @@ def test_ros_rebuild_on_source_change(
 
     initial_hash = build_and_get_hash()
 
-    source_file = workspace.joinpath("src", "talker-py", "setup.py")
+    source_file = workspace.joinpath("src", "navigator_py", "setup.py")
     source_file.write_text(source_file.read_text() + "\n# trigger rebuild\n")
 
     rebuilt_hash = build_and_get_hash()

@@ -1,4 +1,4 @@
-[project]
+[workspace]
 authors = ["Julian Hofer <julian@prefix.dev>"]
 channels = ["https://prefix.dev/conda-forge"]
 description = "Test Pixi and its backend in unison"

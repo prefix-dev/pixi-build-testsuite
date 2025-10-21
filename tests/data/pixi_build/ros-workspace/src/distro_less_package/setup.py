@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = "talker_py"
+package_name = "distro_less_package"
 
 setup(
     name=package_name,
@@ -17,8 +17,6 @@ setup(
     description="TODO: Package description",
     license="TODO: License declaration",
     entry_points={
-        "console_scripts": [
-            "talker = talker_py.talker:main",
-        ],
+        "console_scripts": ["distro_less_package = distro_less_package.distro_less_package:main"],
     },
 )
