@@ -6,6 +6,9 @@ name = "pixi-build-testsuite"
 platforms = ["linux-64", "win-64", "osx-arm64"]
 requires-pixi = ">=0.45"
 
+# Preview as it's being found by some of the tests
+preview = ["pixi-build"]
+
 [dependencies]
 filelock = ">=3.16.0,<4"
 git = "==2.51.0"
