@@ -1,6 +1,8 @@
 import json
 import os
 import shutil
+import subprocess
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
@@ -356,3 +358,81 @@ def multiple_versions_channel_1(channels: Path) -> str:
 @pytest.fixture
 def target_specific_channel_1(channels: Path) -> str:
     return channels.joinpath("target_specific_channel_1").as_uri()
+
+
+@dataclass
+class LocalGitRepo:
+    path: Path
+    main_rev: str
+    other_feature_rev: str
+    tag: str
+
+
+@pytest.fixture
+def local_cpp_git_repo(
+    pixi: Path,
+    build_data: Path,
+    tmp_path_factory: pytest.TempPathFactory,
+) -> LocalGitRepo:
+    """
+    Create a local git repository mirroring cpp-with-path-to-source so tests can
+    exercise git sources without touching the network.
+    """
+
+    source_root = build_data.joinpath("cpp-with-path-to-source")
+    repo_root = tmp_path_factory.mktemp("git-repo")
+    repo_path = repo_root.joinpath("repo")
+    shutil.copytree(source_root, repo_path)
+
+    marker = repo_path.joinpath("project", "LOCAL_MARKER.txt")
+    marker.write_text("local git fixture marker\n", encoding="utf-8")
+
+    readme_path = repo_path.joinpath("README.md")
+
+    def run_git(*args: str) -> str:
+        result = subprocess.run(
+            [str(pixi), "run", "git", *args],
+            cwd=repo_path,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(
+                "git command failed ({}):\nstdout: {}\nstderr: {}".format(
+                    " ".join(args), result.stdout, result.stderr
+                )
+            )
+        return result.stdout.strip()
+
+    run_git("init", "-b", "main")
+    run_git("config", "user.email", "pixi-tests@example.com")
+    run_git("config", "user.name", "Pixi Build Tests")
+    run_git("add", ".")
+    run_git("commit", "-m", "Initial commit")
+
+    run_git("checkout", "-b", "other-feature")
+    readme_path.write_text(
+        readme_path.read_text(encoding="utf-8") + "\nLocal change on other-feature branch\n",
+        encoding="utf-8",
+    )
+    run_git("add", readme_path.relative_to(repo_path).as_posix())
+    run_git("commit", "-m", "Add branch change")
+    other_feature_rev = run_git("rev-parse", "HEAD")
+
+    run_git("checkout", "main")
+    readme_path.write_text(
+        readme_path.read_text(encoding="utf-8") + "\nLocal change on main\n",
+        encoding="utf-8",
+    )
+    run_git("add", readme_path.relative_to(repo_path).as_posix())
+    run_git("commit", "-m", "Update main")
+    main_rev = run_git("rev-parse", "HEAD")
+
+    run_git("tag", "fixture-v1")
+
+    return LocalGitRepo(
+        path=repo_path,
+        main_rev=main_rev,
+        other_feature_rev=other_feature_rev,
+        tag="fixture-v1",
+    )
