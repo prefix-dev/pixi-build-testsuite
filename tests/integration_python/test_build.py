@@ -14,6 +14,9 @@ from .common import (
 )
 
 
+BUILD_RUNNING_STRING = "Running build for recipe:"
+
+
 def test_build_conda_package(
     pixi: Path,
     simple_workspace: Workspace,
@@ -48,36 +51,17 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
             "-v",
             "--manifest-path",
             simple_workspace.workspace_dir,
-        ]
+        ],
+        stderr_contains=BUILD_RUNNING_STRING,
     )
 
-    conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
+    conda_build_params = simple_workspace.find_debug_file("conda_build_v1_params.json")
 
-    assert conda_metadata_params.is_file()
-    assert conda_build_params.is_file()
+    assert conda_build_params is not None
 
     # Remove the files to get a clean state
-    conda_metadata_params.unlink()
     conda_build_params.unlink()
 
-    verify_cli_command(
-        [
-            pixi,
-            "install",
-            "-v",
-            "--manifest-path",
-            simple_workspace.workspace_dir,
-        ]
-    )
-
-    # Everything should be cached, so no getMetadata or build call
-    assert not conda_metadata_params.is_file()
-    assert not conda_build_params.is_file()
-
-
-def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) -> None:
-    simple_workspace.write_files()
     verify_cli_command(
         [
             pixi,
@@ -86,14 +70,26 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
+        stderr_excludes=BUILD_RUNNING_STRING,
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    # Everything should be cached, so no build call,
+    assert simple_workspace.find_debug_file("conda_build_v1_params.json") is None
 
-    assert conda_build_params.is_file()
 
-    # Remove the conda build params to get a clean state
-    conda_build_params.unlink()
+def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) -> None:
+    simple_workspace.write_files()
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            simple_workspace.workspace_dir,
+        ],
+        stderr_contains=BUILD_RUNNING_STRING,
+    )
 
     # Touch the recipe
     simple_workspace.recipe_path.touch()
@@ -106,10 +102,8 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
+        stderr_contains=BUILD_RUNNING_STRING,
     )
-
-    # Touching the recipe should trigger a rebuild and therefore create the file
-    assert conda_build_params.is_file()
 
 
 def test_project_model_change_trigger_rebuild(
@@ -124,11 +118,11 @@ def test_project_model_change_trigger_rebuild(
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
+        stderr_contains=BUILD_RUNNING_STRING,
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
-
-    assert conda_build_params.is_file()
+    conda_build_params = simple_workspace.find_debug_file("conda_build_v1_params.json")
+    assert conda_build_params is not None
 
     # Remove the conda build params to get a clean state
     conda_build_params.unlink()
@@ -146,10 +140,11 @@ def test_project_model_change_trigger_rebuild(
             "--manifest-path",
             simple_workspace.workspace_dir,
         ],
+        stderr_contains=BUILD_RUNNING_STRING,
     )
 
     # modifying the project model should trigger a rebuild and therefore create a file
-    assert conda_build_params.is_file()
+    assert simple_workspace.find_debug_file("conda_build_v1_params.json") is not None
 
 
 @pytest.mark.slow
