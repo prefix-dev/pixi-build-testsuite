@@ -1,4 +1,4 @@
-version: 6
+version: 7
 environments:
   default:
     channels:
@@ -6,30 +6,28 @@ environments:
     packages:
       linux-64:
       - conda: ./recipes/linkerd
-        build: hb0f4dca_0
+        variants:
+          target_platform: linux-64
       osx-arm64:
       - conda: ./recipes/linkerd
-        build: h60d57d3_0
+        variants:
+          target_platform: osx-arm64
 packages:
 - conda: ./recipes/linkerd
   name: linkerd
-  version: 25.5.2
-  build: h60d57d3_0
-  subdir: osx-arm64
   license: Apache-2.0
   input:
-    hash: 02dfaaeb24ff87a13a08bb9b5267b12196b0437269e7302f040e4b507cd0a94d
+    hash: 498b8ffc51e58c1231e9a45e2d8490b2e85952996ba7f05cadc5121594a4b644
     globs:
-    - recipe.yaml
     - variants.yaml
+  variants:
+    target_platform: linux-64
 - conda: ./recipes/linkerd
   name: linkerd
-  version: 25.5.2
-  build: hb0f4dca_0
-  subdir: linux-64
   license: Apache-2.0
   input:
-    hash: 02dfaaeb24ff87a13a08bb9b5267b12196b0437269e7302f040e4b507cd0a94d
+    hash: 498b8ffc51e58c1231e9a45e2d8490b2e85952996ba7f05cadc5121594a4b644
     globs:
-    - recipe.yaml
     - variants.yaml
+  variants:
+    target_platform: osx-arm64
