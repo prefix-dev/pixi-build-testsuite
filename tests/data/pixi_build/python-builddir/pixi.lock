@@ -1,4 +1,4 @@
-version: 6
+version: 7
 environments:
   default:
     channels:
@@ -675,9 +675,6 @@ packages:
   timestamp: 1740379663071
 - conda: .
   name: simple-meson-app
-  version: 0.1.0
-  build: pyh4616a5c_0
-  subdir: noarch
   depends:
   - python >=3.11
   - python *
@@ -685,6 +682,8 @@ packages:
     hash: f90a173287bac45449954c16d194fafa3683099b9ee990e724fcf17a8b1465ad
     globs:
     - pyproject.toml
+  variants:
+    target_platform: noarch
 - conda: https://prefix.dev/conda-forge/linux-64/tk-8.6.13-noxft_hd72426e_102.conda
   sha256: a84ff687119e6d8752346d1d408d5cf360dee0badd487a472aa8ddedfdc219e1
   md5: a0116df4f4ed05c303811a837d5b39d8

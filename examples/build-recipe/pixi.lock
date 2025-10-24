@@ -1,4 +1,4 @@
-version: 6
+version: 7
 environments:
   default:
     channels:
@@ -27,7 +27,8 @@ environments:
       - conda: https://prefix.dev/conda-forge/linux-64/tk-8.6.13-noxft_hd72426e_102.conda
       - conda: https://prefix.dev/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: ./recipes/bzip2
-        build: hb0f4dca_0
+        variants:
+          target_platform: linux-64
       osx-arm64:
       - conda: https://prefix.dev/conda-forge/noarch/ca-certificates-2025.8.3-hbd8a1cb_0.conda
       - conda: https://prefix.dev/conda-forge/osx-arm64/icu-75.1-hfee45f7_0.conda
@@ -43,7 +44,8 @@ environments:
       - conda: https://prefix.dev/conda-forge/osx-arm64/tk-8.6.13-h892fb3f_2.conda
       - conda: https://prefix.dev/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: ./recipes/bzip2
-        build: h60d57d3_0
+        variants:
+          target_platform: osx-arm64
 packages:
 - conda: https://prefix.dev/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -66,32 +68,28 @@ packages:
   timestamp: 1650670423406
 - conda: ./recipes/bzip2
   name: bzip2
-  version: 1.0.8
-  build: h60d57d3_0
-  subdir: osx-arm64
-  input:
-    hash: c3fa608ec3be35cb7dc57a6399ea7bcd693accd657e065dc2b6734775a13e967
-    globs:
-    - recipe.yaml
-    - variants.yaml
-  sources:
-    bzip2:
-      path: .
-- conda: ./recipes/bzip2
-  name: bzip2
-  version: 1.0.8
-  build: hb0f4dca_0
-  subdir: linux-64
   depends:
   - libgcc >=15
   input:
-    hash: c3fa608ec3be35cb7dc57a6399ea7bcd693accd657e065dc2b6734775a13e967
+    hash: 498b8ffc51e58c1231e9a45e2d8490b2e85952996ba7f05cadc5121594a4b644
     globs:
-    - recipe.yaml
     - variants.yaml
   sources:
     bzip2:
       path: .
+  variants:
+    target_platform: linux-64
+- conda: ./recipes/bzip2
+  name: bzip2
+  input:
+    hash: 498b8ffc51e58c1231e9a45e2d8490b2e85952996ba7f05cadc5121594a4b644
+    globs:
+    - variants.yaml
+  sources:
+    bzip2:
+      path: .
+  variants:
+    target_platform: osx-arm64
 - conda: https://prefix.dev/conda-forge/noarch/ca-certificates-2025.10.5-hbd8a1cb_0.conda
   sha256: 3b5ad78b8bb61b6cdc0978a6a99f8dfb2cc789a451378d054698441005ecbdb6
   md5: f9e5fbc24009179e8b0409624691758a

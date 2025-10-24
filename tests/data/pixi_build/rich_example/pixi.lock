@@ -1,4 +1,4 @@
-version: 6
+version: 7
 environments:
   default:
     channels:
@@ -743,15 +743,15 @@ packages:
   timestamp: 1733342347277
 - conda: .
   name: rich_example
-  version: 0.1.0
-  build: pyhbf21a9e_0
-  subdir: noarch
   depends:
   - rich >=13.9.4,<14
   - python
+  - python *
   input:
     hash: 72ab1ea37b84d61120fa373ce9d96514f27c9ca85525452dbe3acf600ef66c2d
     globs: []
+  variants:
+    target_platform: noarch
 - conda: https://prefix.dev/conda-forge/linux-64/tk-8.6.13-noxft_h4845f30_101.conda
   sha256: e0569c9caa68bf476bead1bed3d79650bb080b532c64a4af7d8ca286c08dea4e
   md5: d453b98d9c83e71da0741bb0ff4d76bc

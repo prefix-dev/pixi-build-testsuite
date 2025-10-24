@@ -1,4 +1,4 @@
-version: 6
+version: 7
 environments:
   default:
     channels:
@@ -29,7 +29,8 @@ environments:
       - conda: https://prefix.dev/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: package_a
       - conda: package_b
-        build: hb0f4dca_0
+        variants:
+          target_platform: linux-64
       osx-arm64:
       - conda: https://prefix.dev/conda-forge/osx-arm64/bzip2-1.0.8-h99b78c6_7.conda
       - conda: https://prefix.dev/conda-forge/noarch/ca-certificates-2025.8.3-hbd8a1cb_0.conda
@@ -49,7 +50,8 @@ environments:
       - conda: https://prefix.dev/conda-forge/noarch/tzdata-2025b-h78e105d_0.conda
       - conda: package_a
       - conda: package_b
-        build: h60d57d3_0
+        variants:
+          target_platform: osx-arm64
       win-64:
       - conda: https://prefix.dev/conda-forge/win-64/bzip2-1.0.8-h2466b09_7.conda
       - conda: https://prefix.dev/conda-forge/noarch/ca-certificates-2025.8.3-h4c7d964_0.conda
@@ -70,7 +72,8 @@ environments:
       - conda: https://prefix.dev/conda-forge/win-64/vcomp14-14.44.35208-h818238b_31.conda
       - conda: package_a
       - conda: package_b
-        build: h9490d1a_0
+        variants:
+          target_platform: win-64
 packages:
 - conda: https://prefix.dev/conda-forge/linux-64/_libgcc_mutex-0.1-conda_forge.tar.bz2
   sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
@@ -444,47 +447,42 @@ packages:
   timestamp: 1754467904482
 - conda: package_a
   name: package_a
-  version: 0.1.0
-  build: pyh4616a5c_0
-  subdir: noarch
   depends:
   - package_b
   - python
   - python *
   input:
-    hash: 79e0338812fd1e39475c0e314ed3a5b99c758af3c2d5d2957832ca795afc41f2
-    globs:
-    - pyproject.toml
+    hash: db910dfb318c491805a6e900a64c17efb90bc8d965be8f82355488729f8b141c
+    globs: []
   sources:
     package_b:
       path: ../package_b
+  variants:
+    target_platform: noarch
 - conda: package_b
   name: package_b
-  version: 0.1.0
-  build: h60d57d3_0
-  subdir: osx-arm64
   input:
     hash: 73d5da015a64ec1a51bd4a37a422d1dbbbded5af703a129fac11329c619d81a1
     globs:
     - variants.yaml
+  variants:
+    target_platform: linux-64
 - conda: package_b
   name: package_b
-  version: 0.1.0
-  build: h9490d1a_0
-  subdir: win-64
   input:
     hash: 73d5da015a64ec1a51bd4a37a422d1dbbbded5af703a129fac11329c619d81a1
     globs:
     - variants.yaml
+  variants:
+    target_platform: osx-arm64
 - conda: package_b
   name: package_b
-  version: 0.1.0
-  build: hb0f4dca_0
-  subdir: linux-64
   input:
     hash: 73d5da015a64ec1a51bd4a37a422d1dbbbded5af703a129fac11329c619d81a1
     globs:
     - variants.yaml
+  variants:
+    target_platform: win-64
 - conda: https://prefix.dev/conda-forge/linux-64/python-3.13.5-hec9711d_102_cp313.conda
   build_number: 102
   sha256: c2cdcc98ea3cbf78240624e4077e164dc9d5588eefb044b4097c3df54d24d504
