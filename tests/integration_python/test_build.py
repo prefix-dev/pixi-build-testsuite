@@ -51,14 +51,14 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
         ]
     )
 
-    conda_metadata_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    conda_output_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
     conda_build_params = simple_workspace.debug_dir.joinpath("conda_build_v1_params.json")
 
-    assert conda_metadata_params.is_file()
+    assert conda_output_params.is_file()
     assert conda_build_params.is_file()
 
     # Remove the files to get a clean state
-    conda_metadata_params.unlink()
+    conda_output_params.unlink()
     conda_build_params.unlink()
 
     verify_cli_command(
@@ -72,11 +72,13 @@ def test_no_change_should_be_fully_cached(pixi: Path, simple_workspace: Workspac
     )
 
     # Everything should be cached, so no getMetadata or build call
-    assert not conda_metadata_params.is_file()
+    assert not conda_output_params.is_file()
     assert not conda_build_params.is_file()
 
 
-def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) -> None:
+def test_recipe_change_trigger_metadata_invalidation(
+    pixi: Path, simple_workspace: Workspace
+) -> None:
     simple_workspace.write_files()
     verify_cli_command(
         [
@@ -88,12 +90,12 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
         ],
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    conda_output_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
 
-    assert conda_build_params.is_file()
+    assert conda_output_params.is_file()
 
     # Remove the conda build params to get a clean state
-    conda_build_params.unlink()
+    conda_output_params.unlink()
 
     # Touch the recipe
     simple_workspace.recipe_path.touch()
@@ -109,7 +111,7 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
     )
 
     # Touching the recipe should trigger a rebuild and therefore create the file
-    assert conda_build_params.is_file()
+    assert conda_output_params.is_file()
 
 
 def test_project_model_change_trigger_rebuild(
