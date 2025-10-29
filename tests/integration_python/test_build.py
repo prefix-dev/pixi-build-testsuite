@@ -112,6 +112,77 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
     assert conda_build_params.is_file()
 
 
+def test_out_of_tree_source_respects_cache(pixi: Path, simple_workspace: Workspace) -> None:
+    """
+    Test that if you have an out-of-tree build with a something like
+
+    [package.build]
+    source = "some-dir"
+    That it rebuilds correctly when changed and does not rebuild when unchanged
+    """
+    # Create an out-of-tree directory
+    out_of_tree_dir = simple_workspace.workspace_dir.joinpath("out_of_tree_source")
+    out_of_tree_dir.mkdir()
+    # Write out a file we will modify later on
+    external_file = out_of_tree_dir.joinpath("external.txt")
+    external_file.write_text("initial content", encoding="utf-8")
+
+    # Change the build section
+    build_section = simple_workspace.package_manifest["package"]["build"]
+    build_section["source"] = {"path": "../out_of_tree_source"}
+    configuration = build_section.setdefault("configuration", {})
+    # Add external glob for detection
+    configuration["extra-input-globs"] = ["external.txt"]
+    simple_workspace.recipe["source"] = {"path": "../out_of_tree_source"}
+
+    simple_workspace.write_files()
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            simple_workspace.workspace_dir,
+        ],
+    )
+
+    conda_build_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    assert conda_build_params.is_file()
+
+    # Remove debug file to detect subsequent rebuilds
+    conda_build_params.unlink()
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            simple_workspace.workspace_dir,
+        ],
+    )
+
+    # Out-of-tree sources should be cached when unchanged
+    assert not conda_build_params.exists()
+
+    # Modifying the external source should trigger a rebuild
+    external_file.write_text("updated content", encoding="utf-8")
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            simple_workspace.workspace_dir,
+        ],
+    )
+
+    # And it should be back because the package has been rebuilt
+    assert conda_build_params.is_file()
+
+
 def test_project_model_change_trigger_rebuild(
     pixi: Path, simple_workspace: Workspace, dummy_channel_1: Path
 ) -> None:
