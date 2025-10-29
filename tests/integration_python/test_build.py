@@ -112,7 +112,9 @@ def test_source_change_trigger_rebuild(pixi: Path, simple_workspace: Workspace) 
     assert conda_build_params.is_file()
 
 
-def test_out_of_tree_source_respects_cache(pixi: Path, simple_workspace: Workspace) -> None:
+def test_out_of_tree_source_respects_cache(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
     """
     Test that if you have an out-of-tree build with a something like
 
@@ -120,22 +122,22 @@ def test_out_of_tree_source_respects_cache(pixi: Path, simple_workspace: Workspa
     source = "some-dir"
     That it rebuilds correctly when changed and does not rebuild when unchanged
     """
-    # Create an out-of-tree directory
-    out_of_tree_dir = simple_workspace.workspace_dir.joinpath("out_of_tree_source")
-    out_of_tree_dir.mkdir()
-    # Write out a file we will modify later on
-    external_file = out_of_tree_dir.joinpath("external.txt")
-    external_file.write_text("initial content", encoding="utf-8")
+    project = "out-of-tree-source"
+    test_data = build_data.joinpath(project)
+    target_dir = tmp_pixi_workspace.joinpath(project)
+    copytree_with_local_backend(test_data, target_dir)
 
-    # Change the build section
-    build_section = simple_workspace.package_manifest["package"]["build"]
-    build_section["source"] = {"path": "../out_of_tree_source"}
-    configuration = build_section.setdefault("configuration", {})
-    # Add external glob for detection
-    configuration["extra-input-globs"] = ["external.txt"]
-    simple_workspace.recipe["source"] = {"path": "../out_of_tree_source"}
+    manifest_path = target_dir.joinpath("pixi.toml")
+    package_manifest_path = target_dir.joinpath("package", "pixi.toml")
 
-    simple_workspace.write_files()
+    package_manifest = tomllib.loads(package_manifest_path.read_text(encoding="utf-8"))
+    configuration = package_manifest["package"]["build"].setdefault("configuration", {})
+
+    debug_dir = target_dir.joinpath("debug_dir")
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    configuration["debug-dir"] = str(debug_dir)
+
+    package_manifest_path.write_text(tomli_w.dumps(package_manifest), encoding="utf-8")
 
     verify_cli_command(
         [
@@ -143,11 +145,11 @@ def test_out_of_tree_source_respects_cache(pixi: Path, simple_workspace: Workspa
             "install",
             "-v",
             "--manifest-path",
-            simple_workspace.workspace_dir,
+            manifest_path,
         ],
     )
 
-    conda_build_params = simple_workspace.debug_dir.joinpath("conda_outputs_params.json")
+    conda_build_params = debug_dir.joinpath("conda_outputs_params.json")
     assert conda_build_params.is_file()
 
     # Remove debug file to detect subsequent rebuilds
@@ -159,13 +161,14 @@ def test_out_of_tree_source_respects_cache(pixi: Path, simple_workspace: Workspa
             "install",
             "-v",
             "--manifest-path",
-            simple_workspace.workspace_dir,
+            manifest_path,
         ],
     )
 
     # Out-of-tree sources should be cached when unchanged
     assert not conda_build_params.exists()
 
+    external_file = target_dir.joinpath("out_of_tree_source", "external.txt")
     # Modifying the external source should trigger a rebuild
     external_file.write_text("updated content", encoding="utf-8")
 
@@ -175,7 +178,7 @@ def test_out_of_tree_source_respects_cache(pixi: Path, simple_workspace: Workspa
             "install",
             "-v",
             "--manifest-path",
-            simple_workspace.workspace_dir,
+            manifest_path,
         ],
     )
 
