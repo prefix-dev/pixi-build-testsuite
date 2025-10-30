@@ -2,7 +2,7 @@
 authors = ["Wolf Vollprecht <w.vollprecht@gmail.com>"]
 channels = ["https://prefix.dev/conda-forge"]
 description = "Add a short description here"
-name = "build-recipe"
+name = "linker"
 platforms = ["osx-arm64", "linux-64"]
 preview = ["pixi-build"]
 version = "0.1.0"
