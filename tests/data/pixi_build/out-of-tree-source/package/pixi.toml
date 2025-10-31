@@ -1,0 +1,18 @@
+[package]
+name = "out-of-tree-source"
+version = "1.0.0"
+
+[package.build]
+source = { path = "../out_of_tree_source" }
+
+[package.build.backend]
+channels = [
+  "https://prefix.dev/pixi-build-backends",
+  "https://prefix.dev/conda-forge",
+]
+name = "pixi-build-rattler-build"
+version = "*"
+
+[package.build.configuration]
+debug-dir = "{debug_dir}"
+extra-input-globs = ["external.txt"]

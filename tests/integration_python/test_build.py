@@ -108,6 +108,80 @@ def test_recipe_change_trigger_metadata_invalidation(
     )
 
 
+def test_out_of_tree_source_respects_cache(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    """
+    Test that if you have an out-of-tree build with a something like
+
+    [package.build]
+    source = "some-dir"
+    That it rebuilds correctly when changed and does not rebuild when unchanged
+    """
+    project = "out-of-tree-source"
+    test_data = build_data.joinpath(project)
+    target_dir = tmp_pixi_workspace.joinpath(project)
+    copytree_with_local_backend(test_data, target_dir)
+
+    manifest_path = target_dir.joinpath("pixi.toml")
+    package_manifest_path = target_dir.joinpath("package", "pixi.toml")
+
+    package_manifest = tomllib.loads(package_manifest_path.read_text(encoding="utf-8"))
+    configuration = package_manifest["package"]["build"].setdefault("configuration", {})
+
+    debug_dir = target_dir.joinpath("debug_dir")
+    debug_dir.mkdir(parents=True, exist_ok=True)
+    configuration["debug-dir"] = str(debug_dir)
+
+    package_manifest_path.write_text(tomli_w.dumps(package_manifest), encoding="utf-8")
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+    )
+
+    conda_build_params = debug_dir.joinpath("conda_outputs_params.json")
+    assert conda_build_params.is_file()
+
+    # Remove debug file to detect subsequent rebuilds
+    conda_build_params.unlink()
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+    )
+
+    # Out-of-tree sources should be cached when unchanged
+    assert not conda_build_params.exists()
+
+    external_file = target_dir.joinpath("out_of_tree_source", "external.txt")
+    # Modifying the external source should trigger a rebuild
+    external_file.write_text("updated content", encoding="utf-8")
+
+    verify_cli_command(
+        [
+            pixi,
+            "install",
+            "-v",
+            "--manifest-path",
+            manifest_path,
+        ],
+    )
+
+    # And it should be back because the package has been rebuilt
+    assert conda_build_params.is_file()
+
+
 def test_project_model_change_trigger_rebuild(
     pixi: Path, simple_workspace: Workspace, dummy_channel_1: Path
 ) -> None:
