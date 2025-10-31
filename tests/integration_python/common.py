@@ -125,6 +125,23 @@ class Workspace:
         package_manifest_path = self.package_dir.joinpath("pixi.toml")
         package_manifest_path.write_text(tomli_w.dumps(self.package_manifest))
 
+    def iter_debug_dirs(self) -> list[Path]:
+        candidates: list[Path] = []
+        work_root = self.workspace_dir.joinpath(".pixi", "build", "work")
+        if work_root.is_dir():
+            for entry in sorted(work_root.iterdir()):
+                debug_candidate = entry.joinpath("debug")
+                if debug_candidate.is_dir():
+                    candidates.append(debug_candidate)
+        return candidates
+
+    def find_debug_file(self, filename: str) -> Path | None:
+        for debug_dir in self.iter_debug_dirs():
+            target = debug_dir.joinpath(filename)
+            if target.is_file():
+                return target
+        return None
+
 
 class ExitCode(IntEnum):
     SUCCESS = 0

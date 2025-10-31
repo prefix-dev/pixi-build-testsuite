@@ -3,12 +3,11 @@ import os
 import shutil
 from pathlib import Path
 from typing import Any, cast
+from urllib.parse import unquote, urlparse
+from urllib.request import url2pathname
 
 import dotenv
 import pytest
-
-from urllib.parse import urlparse, unquote
-from urllib.request import url2pathname
 
 from .common import (
     CURRENT_PLATFORM,
@@ -121,7 +120,6 @@ def simple_workspace(
                         "https://prefix.dev/conda-forge",
                     ],
                 },
-                "configuration": {"debug-dir": str(debug_dir)},
             },
         },
     }
