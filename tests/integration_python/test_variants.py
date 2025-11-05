@@ -33,7 +33,7 @@ def test_inline_variants_produce_multiple_outputs(
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             manifest_path,
             "--output-dir",
             output_dir,
@@ -125,7 +125,7 @@ def test_variant_files_produce_multiple_outputs(
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             manifest_path,
             "--output-dir",
             output_dir,

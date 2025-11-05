@@ -59,7 +59,7 @@ def test_ros_packages_build(
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             manifest_path,
             "--output-dir",
             output_dir,
@@ -83,7 +83,7 @@ def test_ros_input_globs(pixi: Path, build_data: Path, tmp_pixi_workspace: Path)
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             manifest_path,
             "--output-dir",
             output_dir,
@@ -111,7 +111,7 @@ def test_ros_rebuild_on_source_change(
             [
                 pixi,
                 "build",
-                "--manifest-path",
+                "--path",
                 manifest_path,
                 "--output-dir",
                 output_dir,
