@@ -54,7 +54,7 @@ def test_ros_packages_build(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # point to the concrete package manifest
-    manifest_path = workspace.joinpath("src", package_dir, "package.xml")
+    manifest_path = workspace.joinpath("src", package_dir, "pixi.xml")
 
     verify_cli_command(
         [
@@ -78,7 +78,7 @@ def test_ros_input_globs(pixi: Path, build_data: Path, tmp_pixi_workspace: Path)
     output_dir = workspace.joinpath("dist")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    manifest_path = workspace.joinpath("src", "navigator_py", "package.xml")
+    manifest_path = workspace.joinpath("src", "navigator_py", "pixi.xml")
 
     verify_cli_command(
         [
@@ -104,7 +104,7 @@ def test_ros_rebuild_on_source_change(
     output_dir = workspace.joinpath("dist")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    manifest_path = workspace.joinpath("src", "navigator_py", "package.xml")
+    manifest_path = workspace.joinpath("src", "navigator_py", "pixi.toml")
     package_name = ROS_PACKAGE_OUTPUT_NAMES["navigator_py"]
 
     def build_and_get_hash() -> str:
