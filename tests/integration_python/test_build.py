@@ -351,6 +351,7 @@ def test_rattler_build_source_dependency(
         stderr_contains="hello from package a!",
     )
 
+
 def test_rattler_build_point_to_recipe(
     pixi: Path, build_data: Path, tmp_pixi_workspace: Path
 ) -> None:
@@ -376,9 +377,9 @@ def test_rattler_build_point_to_recipe(
         ],
         expected_exit_code=ExitCode.SUCCESS,
     )
-    
+
     built_packages = list(output_dir.glob("*.conda"))
-    assert built_packages, f"no package artifacts produced"
+    assert built_packages, "no package artifacts produced"
 
 
 def test_rattler_build_autodiscovery(
@@ -407,9 +408,10 @@ def test_rattler_build_autodiscovery(
         ],
         expected_exit_code=ExitCode.SUCCESS,
     )
-    
+
     built_packages = list(output_dir.glob("*.conda"))
-    assert built_packages, f"no package artifacts produced"
+    assert built_packages, "no package artifacts produced"
+
 
 def test_suggest_what_manifest_file_should_be(
     pixi: Path, build_data: Path, tmp_pixi_workspace: Path
@@ -424,7 +426,6 @@ def test_suggest_what_manifest_file_should_be(
 
     manifest_path.mkdir(parents=True, exist_ok=True)
 
-
     verify_cli_command(
         [
             pixi,
@@ -434,9 +435,9 @@ def test_suggest_what_manifest_file_should_be(
             manifest_path,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains="Ensure that the source directory contains a valid pixi.toml, pyproject.toml, recipe.yaml, package.xml or mojoproject.toml file."
+        stderr_contains="Ensure that the source directory contains a valid pixi.toml, pyproject.toml, recipe.yaml, package.xml or mojoproject.toml file.",
     )
-    
+
 
 @pytest.mark.slow
 def test_recursive_source_run_dependencies(

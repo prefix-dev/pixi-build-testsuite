@@ -73,6 +73,7 @@ def test_ros_packages_build(
     assert built_packages, f"no package artifacts produced for {expected_name}"
     assert any(expected_name in artifact.name for artifact in built_packages)
 
+
 @pytest.mark.slow
 @pytest.mark.parametrize("package_dir", ROS_PACKAGE_DIRS, ids=ROS_PACKAGE_DIRS)
 def test_ros_packages_build_point_to_package_xml(
@@ -101,6 +102,7 @@ def test_ros_packages_build_point_to_package_xml(
     assert built_packages, f"no package artifacts produced for {expected_name}"
     assert any(expected_name in artifact.name for artifact in built_packages)
 
+
 @pytest.mark.slow
 def test_ros_packages_build_point_to_package_xml_in_the_same_dir(
     pixi: Path, build_data: Path, tmp_pixi_workspace: Path
@@ -121,12 +123,12 @@ def test_ros_packages_build_point_to_package_xml_in_the_same_dir(
             "--output-dir",
             output_dir,
         ],
-        cwd=manifest_path
+        cwd=manifest_path,
     )
 
-
     built_packages = list(output_dir.glob("*.conda"))
-    assert built_packages, f"no package artifacts produced for {expected_name}"
+    assert built_packages, "no package artifacts produced"
+
 
 @pytest.mark.slow
 def test_ros_packages_build_point_to_implicit_package_xml_fails(
@@ -149,8 +151,12 @@ def test_ros_packages_build_point_to_implicit_package_xml_fails(
             output_dir,
         ],
         expected_exit_code=ExitCode.FAILURE,
-        stderr_contains=["is a directory, please provide the path to the manifest file", "did you mean package.xml"]
+        stderr_contains=[
+            "is a directory, please provide the path to the manifest file",
+            "did you mean package.xml",
+        ],
     )
+
 
 def test_ros_input_globs(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
     workspace = _prepare_ros_workspace(build_data, tmp_pixi_workspace)
