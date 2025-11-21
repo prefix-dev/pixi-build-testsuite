@@ -23,7 +23,7 @@ env:
 
 jobs:
   test-linux-x86_64:
-    timeout-minutes: 10
+    timeout-minutes: 15
     name: Build test Linux x86_64
     runs-on: 8core_ubuntu_latest_runner
     steps:
@@ -44,7 +44,7 @@ jobs:
         run: pixi run --locked test-slow
 
   test-windows-x86_64:
-    timeout-minutes: 10
+    timeout-minutes: 15
     name: Build test Windows x86_64
     runs-on: windows-latest
     steps:
@@ -74,7 +74,7 @@ jobs:
         working-directory: ${{ env.PIXI_WORKSPACE }}
 
   test-macos-aarch64:
-    timeout-minutes: 10
+    timeout-minutes: 15
     name: Build test macOS aarch64
     runs-on: macos-14
     steps:
