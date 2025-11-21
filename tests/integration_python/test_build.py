@@ -26,7 +26,7 @@ def test_build_conda_package(
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             simple_workspace.package_dir,
             "--output-dir",
             simple_workspace.workspace_dir,
@@ -245,7 +245,7 @@ def test_build_using_rattler_build_backend(
 
     # Running pixi build should build the recipe.yaml
     verify_cli_command(
-        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "-v", "--path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )
 
     # really make sure that conda package was built
@@ -256,7 +256,7 @@ def test_build_using_rattler_build_backend(
 
     # check that immediately repeating the build also works (prefix-dev/pixi-build-backends#287)
     verify_cli_command(
-        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "-v", "--path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )
 
 
@@ -276,14 +276,14 @@ def test_incremental_builds(
     manifest_path = tmp_pixi_workspace / "pixi.toml"
 
     verify_cli_command(
-        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "-v", "--path", manifest_path, "--output-dir", tmp_pixi_workspace],
         stderr_contains=non_incremental_evidence,
         strip_ansi=True,
     )
 
     # immediately repeating the build should give evidence of incremental compilation
     verify_cli_command(
-        [pixi, "build", "-v", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "-v", "--path", manifest_path, "--output-dir", tmp_pixi_workspace],
         stderr_excludes=non_incremental_evidence,
         strip_ansi=True,
     )
@@ -349,6 +349,93 @@ def test_rattler_build_source_dependency(
         ],
         expected_exit_code=ExitCode.SUCCESS,
         stderr_contains="hello from package a!",
+    )
+
+
+def test_rattler_build_point_to_recipe(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    copytree_with_local_backend(
+        test_data / "source-dependency", tmp_pixi_workspace / "source-dependency"
+    )
+    manifest_path = tmp_pixi_workspace / "source-dependency" / "c" / "recipe.yaml"
+
+    output_dir = tmp_pixi_workspace.joinpath("dist")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    verify_cli_command(
+        [
+            pixi,
+            "build",
+            "-v",
+            "--path",
+            manifest_path,
+            "--output-dir",
+            output_dir,
+        ],
+        expected_exit_code=ExitCode.SUCCESS,
+    )
+
+    built_packages = list(output_dir.glob("*.conda"))
+    assert built_packages, "no package artifacts produced"
+
+
+def test_rattler_build_autodiscovery(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    copytree_with_local_backend(
+        test_data / "source-dependency", tmp_pixi_workspace / "source-dependency"
+    )
+    # don-t point to recipe.yaml, but to the directory containing it
+    manifest_path = tmp_pixi_workspace / "source-dependency" / "c"
+
+    output_dir = tmp_pixi_workspace.joinpath("dist")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    verify_cli_command(
+        [
+            pixi,
+            "build",
+            "-v",
+            "--path",
+            manifest_path,
+            "--output-dir",
+            output_dir,
+        ],
+        expected_exit_code=ExitCode.SUCCESS,
+    )
+
+    built_packages = list(output_dir.glob("*.conda"))
+    assert built_packages, "no package artifacts produced"
+
+
+def test_suggest_what_manifest_file_should_be(
+    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
+) -> None:
+    test_data = build_data.joinpath("rattler-build-backend")
+    # copy the whole smokey2 project to the tmp_pixi_workspace
+    copytree_with_local_backend(
+        test_data / "source-dependency", tmp_pixi_workspace / "source-dependency"
+    )
+    # don-t point to recipe.yaml, but to the directory containing it
+    manifest_path = tmp_pixi_workspace / "source-dependency" / "empty-dir"
+
+    manifest_path.mkdir(parents=True, exist_ok=True)
+
+    verify_cli_command(
+        [
+            pixi,
+            "build",
+            "-v",
+            "--path",
+            manifest_path,
+        ],
+        expected_exit_code=ExitCode.FAILURE,
+        stderr_contains="Ensure that the source directory contains a valid pixi.toml, pyproject.toml, recipe.yaml, package.xml or mojoproject.toml file.",
     )
 
 
@@ -469,7 +556,7 @@ def test_source_path(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> 
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             tmp_pixi_workspace,
             "--output-dir",
             tmp_pixi_workspace,
@@ -524,5 +611,5 @@ def test_target_specific_dependency(
     manifest_path.write_text(tomli_w.dumps(manifest))
 
     verify_cli_command(
-        [pixi, "build", "--manifest-path", manifest_path, "--output-dir", tmp_pixi_workspace],
+        [pixi, "build", "--path", manifest_path, "--output-dir", tmp_pixi_workspace],
     )

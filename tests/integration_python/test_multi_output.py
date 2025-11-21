@@ -14,7 +14,7 @@ def test_build(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
         [
             pixi,
             "build",
-            "--manifest-path",
+            "--path",
             package_manifest,
             "--output-dir",
             tmp_pixi_workspace,
