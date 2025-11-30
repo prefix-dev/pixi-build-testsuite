@@ -1,0 +1,9 @@
+[workspace]
+channels = ["https://prefix.dev/conda-forge"]
+name = "out-of-tree-source"
+platforms = ["linux-64", "osx-arm64", "win-64"]
+preview = ["pixi-build"]
+version = "1.0.0"
+
+[dependencies]
+out-of-tree-source = { path = "package" }
