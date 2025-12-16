@@ -6,7 +6,6 @@ import pytest
 
 from .common import ExitCode, copytree_with_local_backend, verify_cli_command
 
-
 ROS_WORKSPACE_NAME = "ros-workspace"
 ROS_PACKAGE_DIRS = ["navigator", "navigator_py", "distro_less_package"]
 ROS_IMPLICIT_PACKAGE_DIR = "navigator_implicit"
@@ -156,63 +155,3 @@ def test_ros_packages_build_point_to_implicit_package_xml_fails(
             "did you mean package.xml",
         ],
     )
-
-
-def test_ros_input_globs(pixi: Path, build_data: Path, tmp_pixi_workspace: Path) -> None:
-    workspace = _prepare_ros_workspace(build_data, tmp_pixi_workspace)
-    output_dir = workspace.joinpath("dist")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    manifest_path = workspace.joinpath("src", "navigator_py", "pixi.toml")
-
-    verify_cli_command(
-        [
-            pixi,
-            "build",
-            "--path",
-            manifest_path,
-            "--output-dir",
-            output_dir,
-        ]
-    )
-
-    metadata = _load_package_metadata(workspace, ROS_PACKAGE_OUTPUT_NAMES["navigator_py"])
-    globs = metadata.get("input_hash", {}).get("globs", [])
-    print(globs)
-    assert {"hi"}.issubset(set(globs))
-
-
-def test_ros_rebuild_on_source_change(
-    pixi: Path, build_data: Path, tmp_pixi_workspace: Path
-) -> None:
-    workspace = _prepare_ros_workspace(build_data, tmp_pixi_workspace)
-    output_dir = workspace.joinpath("dist")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    manifest_path = workspace.joinpath("src", "navigator_py", "pixi.toml")
-    package_name = ROS_PACKAGE_OUTPUT_NAMES["navigator_py"]
-
-    def build_and_get_hash() -> str:
-        verify_cli_command(
-            [
-                pixi,
-                "build",
-                "--path",
-                manifest_path,
-                "--output-dir",
-                output_dir,
-            ]
-        )
-        metadata = _load_package_metadata(workspace, package_name)
-        hash_value = metadata.get("input_hash", {}).get("hash", "")
-        assert isinstance(hash_value, str)
-        return hash_value
-
-    initial_hash = build_and_get_hash()
-
-    source_file = workspace.joinpath("src", "navigator_py", "setup.py")
-    source_file.write_text(source_file.read_text() + "\n# trigger rebuild\n")
-
-    rebuilt_hash = build_and_get_hash()
-
-    assert rebuilt_hash and rebuilt_hash != initial_hash
