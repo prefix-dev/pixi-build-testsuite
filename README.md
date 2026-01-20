@@ -1,5 +1,8 @@
 # Pixi Build Testsuite
 
+> [!IMPORTANT]
+> This repository has moved to https://github.com/prefix-dev/pixi
+
 This repo contains the testsuite that is used by both [Pixi] CI and [pixi-build-backends] CI to verify that they work properly in combination.
 
 
